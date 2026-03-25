@@ -11,28 +11,25 @@ nav_order: 2
 
 <details>
 <summary>Text-based diagram (for terminals)</summary>
-
-```text
-                    Internet
-                       │
+<pre><code>         Internet
+                       |
                  [Load Balancer]
                    /         \
           [Frontend]         [Backend]
           Next.js 16         FastAPI + Gunicorn
           Port 3000          Port 8000
-               │                  │
-               │            ┌─────┴──────┐
-               │            │            │
-               │      [PostgreSQL]  [Redis]
-               │       Port 5432    Port 6379
-               │            │
-               │      [Read Replica]
-               │       (optional)
-               │
+               |                  |
+               |            +-----+------+
+               |            |            |
+               |      [PostgreSQL]  [Redis]
+               |       Port 5432    Port 6379
+               |            |
+               |      [Read Replica]
+               |       (optional)
+               |
          [CDN / CloudFront]
           (optional, static assets)
-```
-
+</code></pre>
 </details>
 
 ---
