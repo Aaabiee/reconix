@@ -11,7 +11,8 @@ nav_order: 2
 
 <details>
 <summary>Text-based diagram (for terminals)</summary>
-<pre><code>         Internet
+```text
+                   Internet
                        |
                  [Load Balancer]
                    /         \
@@ -29,7 +30,7 @@ nav_order: 2
                |
          [CDN / CloudFront]
           (optional, static assets)
-</code></pre>
+```
 </details>
 
 ---
