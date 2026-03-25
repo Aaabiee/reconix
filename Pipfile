@@ -1,0 +1,43 @@
+[[source]]
+url = "https://pypi.org/simple"
+verify_ssl = true
+name = "pypi"
+
+[packages]
+fastapi = ">=0.110,<1.0"
+uvicorn = {extras = ["standard"], version = ">=0.27,<1.0"}
+gunicorn = ">=21.2,<23.0"
+sqlalchemy = ">=2.0,<3.0"
+alembic = ">=1.13,<2.0"
+asyncpg = ">=0.29,<1.0"
+aiosqlite = ">=0.20,<1.0"
+pydantic = ">=2.5,<3.0"
+pydantic-settings = ">=2.1,<3.0"
+pyjwt = ">=2.8,<3.0"
+passlib = {extras = ["bcrypt"], version = ">=1.7,<2.0"}
+python-multipart = ">=0.0.6,<1.0"
+httpx = ">=0.26,<1.0"
+slowapi = ">=0.1.9,<1.0"
+python-dotenv = ">=1.0,<2.0"
+psycopg2-binary = ">=2.9,<3.0"
+sentry-sdk = {extras = ["fastapi"], version = ">=1.40,<3.0"}
+redis = ">=5.0,<6.0"
+hvac = ">=2.1,<3.0"
+
+[dev-packages]
+pytest = ">=8.0,<9.0"
+pytest-asyncio = ">=0.23,<1.0"
+pytest-cov = ">=4.1,<6.0"
+pytest-mock = ">=3.12,<4.0"
+faker = ">=22.0,<30.0"
+
+[requires]
+python_version = "3.12"
+
+[scripts]
+dev = "uvicorn fast_api.main:app --reload --host 0.0.0.0 --port 8000"
+test = "pytest --cov=fast_api --cov-fail-under=70 -q"
+lint = "python -m py_compile fast_api/main.py"
+migrate = "alembic -c fast_api/alembic.ini upgrade head"
+makemigration = "alembic -c fast_api/alembic.ini revision --autogenerate"
+seed = "python scripts/seed_admin.py"

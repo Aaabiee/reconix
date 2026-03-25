@@ -1,0 +1,15 @@
+node_modules
+.next
+.env
+.env.local
+.env.production
+.git
+.gitignore
+.vscode
+.idea
+docs
+coverage
+__pycache__
+*.pyc
+.pytest_cache
+htmlcov

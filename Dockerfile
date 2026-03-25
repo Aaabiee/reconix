@@ -1,0 +1,78 @@
+FROM python:3.12-slim AS backend-base
+
+RUN apt-get update && apt-get install -y --no-install-recommends \
+    gcc \
+    curl \
+    && rm -rf /var/lib/apt/lists/*
+
+RUN pip install --no-cache-dir pipenv
+
+WORKDIR /app
+
+COPY Pipfile Pipfile.lock ./
+RUN pipenv install --deploy --system
+
+COPY fast_api/ ./fast_api/
+COPY gunicorn.conf.py ./
+
+FROM node:20-alpine AS frontend-deps
+
+WORKDIR /app
+COPY package.json package-lock.json* yarn.lock* pnpm-lock.yaml* ./
+RUN \
+  if [ -f yarn.lock ]; then yarn install --frozen-lockfile; \
+  elif [ -f pnpm-lock.yaml ]; then corepack enable pnpm && pnpm install --frozen-lockfile; \
+  elif [ -f package-lock.json ]; then npm ci; \
+  else npm install; \
+  fi
+
+FROM node:20-alpine AS frontend-builder
+
+WORKDIR /app
+COPY --from=frontend-deps /app/node_modules ./node_modules
+COPY package.json next.config.js tsconfig.json tailwind.config.ts postcss.config.js index.html index.scss App.tsx ./
+COPY src/ ./src/
+COPY public/ ./public/
+
+ENV NEXT_TELEMETRY_DISABLED=1
+RUN npm run build
+
+FROM python:3.12-slim
+
+RUN apt-get update && apt-get install -y --no-install-recommends \
+    curl \
+    nodejs \
+    && rm -rf /var/lib/apt/lists/*
+
+RUN groupadd -r reconix && useradd -r -g reconix -d /app -s /sbin/nologin reconix
+
+WORKDIR /app
+
+COPY --from=backend-base /usr/local/lib/python3.12/site-packages /usr/local/lib/python3.12/site-packages
+COPY --from=backend-base /usr/local/bin/gunicorn /usr/local/bin/gunicorn
+COPY --from=backend-base /usr/local/bin/uvicorn /usr/local/bin/uvicorn
+COPY --from=backend-base /app/fast_api ./fast_api
+COPY --from=backend-base /app/gunicorn.conf.py ./
+
+COPY --from=frontend-builder /app/public ./frontend/public
+COPY --from=frontend-builder --chown=reconix:reconix /app/.next/standalone ./frontend
+COPY --from=frontend-builder --chown=reconix:reconix /app/.next/static ./frontend/.next/static
+
+RUN chown -R reconix:reconix /app
+
+USER reconix
+
+ENV PYTHONUNBUFFERED=1
+ENV PYTHONDONTWRITEBYTECODE=1
+ENV PYTHONPATH=/app
+ENV NODE_ENV=production
+ENV NEXT_TELEMETRY_DISABLED=1
+ENV PORT=3000
+ENV HOSTNAME="0.0.0.0"
+
+EXPOSE 8000 3000
+
+HEALTHCHECK --interval=30s --timeout=5s --start-period=30s --retries=3 \
+    CMD curl -f http://localhost:8000/health && wget --no-verbose --tries=1 --spider http://localhost:3000/ || exit 1
+
+CMD ["sh", "-c", "node frontend/server.js & gunicorn fast_api.main:app -c gunicorn.conf.py"]
