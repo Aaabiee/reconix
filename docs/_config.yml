@@ -17,6 +17,7 @@ nav:
   - API Reference: api-reference.md
   - Testing: testing.md
   - Deployment: deployment.md
+  - Technical Deep Dive: technical-deep-dive.md
 
 exclude:
   - proposal/
