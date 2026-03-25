@@ -10,7 +10,7 @@ plugins:
   - jekyll-remote-theme
 
 nav:
-  - Home: INDEX.md
+  - Home: index.md
   - Architecture: architecture.md
   - Database Architecture: database.md
   - Security: security.md
