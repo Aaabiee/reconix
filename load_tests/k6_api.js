@@ -1,5 +1,5 @@
 import http from "k6/http";
-import { check, sleep, group } from "k6";
+import { check, sleep } from "k6";
 import { Rate, Trend } from "k6/metrics";
 
 const BASE_URL = __ENV.BASE_URL || "http://localhost:8000";
@@ -40,12 +40,12 @@ const headers = {
 };
 
 export default function () {
-  group("Health Check", function () {
-    const res = http.get(`${BASE_URL}/health`, {
-      tags: { name: "health" },
-    });
-    healthDuration.add(res.timings.duration);
-    const ok = check(res, {
+  const healthRes = http.get(`${BASE_URL}/health`, {
+    tags: { name: "health" },
+  });
+  healthDuration.add(healthRes.timings.duration);
+  errorRate.add(
+    !check(healthRes, {
       "health status is 200": (r) => r.status === 200,
       "health response has status": (r) => {
         try {
@@ -54,18 +54,17 @@ export default function () {
           return false;
         }
       },
-    });
-    errorRate.add(!ok);
-  });
+    })
+  );
 
-  group("List Recycled SIMs", function () {
-    const page = Math.floor(Math.random() * 5);
-    const res = http.get(
-      `${BASE_URL}/api/v1/recycled-sims?skip=${page * 50}&limit=50`,
-      { headers, tags: { name: "list_sims" } }
-    );
-    listSimsDuration.add(res.timings.duration);
-    const ok = check(res, {
+  const page = Math.floor(Math.random() * 5);
+  const simsRes = http.get(
+    `${BASE_URL}/api/v1/recycled-sims?skip=${page * 50}&limit=50`,
+    { headers, tags: { name: "list_sims" } }
+  );
+  listSimsDuration.add(simsRes.timings.duration);
+  errorRate.add(
+    !check(simsRes, {
       "list sims status is 200": (r) => r.status === 200,
       "list sims has items": (r) => {
         try {
@@ -75,34 +74,31 @@ export default function () {
         }
       },
       "list sims response time < 1.5s": (r) => r.timings.duration < 1500,
-    });
-    errorRate.add(!ok);
-  });
+    })
+  );
 
-  group("Dashboard Stats", function () {
-    const res = http.get(`${BASE_URL}/api/v1/dashboard/stats`, {
-      headers,
-      tags: { name: "dashboard_stats" },
-    });
-    dashboardDuration.add(res.timings.duration);
-    const ok = check(res, {
+  const statsRes = http.get(`${BASE_URL}/api/v1/dashboard/stats`, {
+    headers,
+    tags: { name: "dashboard_stats" },
+  });
+  dashboardDuration.add(statsRes.timings.duration);
+  errorRate.add(
+    !check(statsRes, {
       "dashboard stats status is 200": (r) => r.status === 200,
       "dashboard stats response time < 2s": (r) => r.timings.duration < 2000,
-    });
-    errorRate.add(!ok);
-  });
+    })
+  );
 
-  group("Dashboard Trends", function () {
-    const days = [7, 14, 30][Math.floor(Math.random() * 3)];
-    const res = http.get(`${BASE_URL}/api/v1/dashboard/trends?days=${days}`, {
-      headers,
-      tags: { name: "dashboard_trends" },
-    });
-    const ok = check(res, {
+  const days = [7, 14, 30][Math.floor(Math.random() * 3)];
+  const trendsRes = http.get(
+    `${BASE_URL}/api/v1/dashboard/trends?days=${days}`,
+    { headers, tags: { name: "dashboard_trends" } }
+  );
+  errorRate.add(
+    !check(trendsRes, {
       "dashboard trends status is 200": (r) => r.status === 200,
-    });
-    errorRate.add(!ok);
-  });
+    })
+  );
 
   sleep(Math.random() * 2 + 0.5);
 }
