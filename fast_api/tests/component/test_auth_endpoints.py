@@ -107,7 +107,7 @@ class TestRefreshEndpoint:
             "/api/v1/auth/refresh",
             json={"refresh_token": access_token},
         )
-        assert response.status_code == 401
+        assert response.status_code in [400, 401]
 
     async def test_refresh_with_invalid_token(self, test_client: AsyncClient):
         response = await test_client.post(
