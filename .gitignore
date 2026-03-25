@@ -11,11 +11,14 @@ htmlcov/
 *.egg-info/
 dist/
 build/
+*.whl
 
 .env
 .env.local
+.env.*.local
 .env.production
 .env.staging
+.env.development
 
 *.log
 *.pid
@@ -32,3 +35,28 @@ Thumbs.db
 
 .vercel/
 .claude/
+
+*.pem
+*.key
+*.crt
+*.p12
+*.pfx
+*.jks
+*.keystore
+id_rsa
+id_ed25519
+*.pub
+
+credentials.json
+service-account*.json
+secrets.yaml
+secrets.yml
+vault-token
+.vault-token
+*.secrets
+
+backups/
+*.sql.gz
+*.dump
+
+sdk/

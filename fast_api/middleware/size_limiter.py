@@ -17,7 +17,7 @@ class RequestSizeLimitMiddleware(BaseHTTPMiddleware):
         try:
             if content_length and int(content_length) > self.max_size_bytes:
                 return JSONResponse(
-                    status_code=status.HTTP_413_REQUEST_ENTITY_TOO_LARGE,
+                    status_code=413,
                     content={
                         "code": "REQUEST_TOO_LARGE",
                         "message": f"Request body exceeds {self.max_size_bytes // (1024 * 1024)}MB limit",

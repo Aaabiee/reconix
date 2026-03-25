@@ -61,7 +61,7 @@ async def get_resource_audit_logs(
 ):
     if not RESOURCE_ID_PATTERN.match(resource_id):
         raise HTTPException(
-            status_code=status.HTTP_422_UNPROCESSABLE_ENTITY,
+            status_code=422,
             detail={
                 "code": "VALIDATION_ERROR",
                 "message": "resource_id must be alphanumeric, dashes, or underscores (max 64 chars)",

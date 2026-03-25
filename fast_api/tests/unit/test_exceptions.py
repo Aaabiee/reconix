@@ -19,7 +19,7 @@ class TestValidationError:
 
     def test_validation_error_status_code(self):
         exc = ValidationError("Field is invalid")
-        assert exc.status_code == status.HTTP_422_UNPROCESSABLE_ENTITY
+        assert exc.status_code == 422
 
     def test_validation_error_code(self):
         exc = ValidationError("Field is invalid")
