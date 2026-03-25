@@ -28,7 +28,7 @@ jobs:
       - name: Run tests
         env:
           PYTHONPATH: ${{ github.workspace }}
-          DATABASE_URL: sqlite+aiosqlite:///:memory:
+          DATABASE_URL: "sqlite+aiosqlite:///:memory:"
           DATABASE_DRIVER: sqlite
           JWT_SECRET_KEY: ci-test-secret-key-not-for-production-use-32chars
           FIELD_ENCRYPTION_KEY: ci-test-encryption-key-for-testing-only-32chars-min
