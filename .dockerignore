@@ -7,9 +7,17 @@ node_modules
 .gitignore
 .vscode
 .idea
+.claude
 docs
 coverage
 __pycache__
 *.pyc
 .pytest_cache
 htmlcov
+e2e
+load_tests
+infra
+backups
+sdk
+*.md
+!README.md
