@@ -1,7 +1,7 @@
 'use client';
 
 import React from 'react';
-import { useParams, useRouter } from 'next/navigation';
+import { useParams } from 'next/navigation';
 import { PageLayout } from '@/components/page-layout/page-layout.component';
 import { StatusBadge } from '@/components/status-badge/status-badge.component';
 import { Modal } from '@/components/modal/modal.component';
@@ -15,7 +15,6 @@ import { useAuth } from '@/hooks/useAuth';
 
 export default function DelinkRequestDetailPage(): JSX.Element {
   const params = useParams();
-  const router = useRouter();
   const { user } = useAuth();
   const id = params.id as string;
   const [showApproveModal, setShowApproveModal] = React.useState(false);
