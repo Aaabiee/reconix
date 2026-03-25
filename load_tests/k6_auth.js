@@ -2,7 +2,7 @@ import http from "k6/http";
 import { check, sleep, group } from "k6";
 import { Rate, Counter, Trend } from "k6/metrics";
 
-const BASE_URL = __ENV.BASE_URL || "http://localhost:8000";
+const BASE_URL = __ENV.BASE_URL || "http://localhost:443";
 
 const errorRate = new Rate("errors");
 const loginDuration = new Trend("login_duration", true);

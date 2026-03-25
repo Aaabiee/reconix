@@ -68,12 +68,12 @@ ENV PYTHONDONTWRITEBYTECODE=1
 ENV PYTHONPATH=/app
 ENV NODE_ENV=production
 ENV NEXT_TELEMETRY_DISABLED=1
-ENV PORT=3000
+ENV PORT=443
 ENV HOSTNAME="0.0.0.0"
 
-EXPOSE 8000 3000
+EXPOSE 443
 
 HEALTHCHECK --interval=30s --timeout=5s --start-period=30s --retries=3 \
-    CMD curl -f http://localhost:8000/health && wget --no-verbose --tries=1 --spider http://localhost:3000/ || exit 1
+    CMD curl -f http://localhost:443/health || exit 1
 
-CMD ["sh", "-c", "node frontend/server.js & gunicorn fast_api.main:app -c gunicorn.conf.py"]
+CMD ["gunicorn", "fast_api.main:app", "-c", "gunicorn.conf.py"]

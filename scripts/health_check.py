@@ -5,7 +5,7 @@ Polls the /health endpoint at a configurable interval and logs results.
 Designed to run as a cron job or systemd timer for external uptime monitoring.
 
 Usage:
-    python scripts/health_check.py --url http://localhost:8000/health --interval 30
+    python scripts/health_check.py --url http://localhost:443/health --interval 30
     python scripts/health_check.py --url https://api.reconix.ng/health --webhook https://hooks.slack.com/...
 """
 
@@ -89,7 +89,7 @@ def main() -> None:
     parser = argparse.ArgumentParser(description="Reconix uptime health check poller")
     parser.add_argument(
         "--url",
-        default="http://localhost:8000/health",
+        default="http://localhost:443/health",
         help="Health endpoint URL",
     )
     parser.add_argument(

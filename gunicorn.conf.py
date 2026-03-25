@@ -1,7 +1,7 @@
 import multiprocessing
 import os
 
-bind = "0.0.0.0:8000"
+bind = "0.0.0.0:" + os.environ.get("PORT", "443")
 worker_class = "uvicorn.workers.UvicornWorker"
 workers = int(os.environ.get("WEB_CONCURRENCY", min(multiprocessing.cpu_count() * 2 + 1, 9)))
 threads = 1
