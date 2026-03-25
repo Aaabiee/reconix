@@ -28,7 +28,7 @@ const config: Config = {
         error: { 50: '#fef2f2', 500: '#DC2626', 600: '#b91c1c' },
         surface: { DEFAULT: '#FFFFFF', 50: '#FAFBFC', 100: '#F1F5F9', 200: '#E2E8F0' },
       },
-      backgroundColor: { page: '#F0F4F8', surface: '#FFFFFF' },
+      backgroundColor: { page: '#F0F4F8', surface: { DEFAULT: '#FFFFFF', 50: '#FAFBFC', 100: '#F1F5F9', 200: '#E2E8F0' } },
       textColor: { default: '#1a2332', muted: '#64748b' },
       fontFamily: { sans: ['Inter', 'system-ui', '-apple-system', 'sans-serif'] },
       boxShadow: {

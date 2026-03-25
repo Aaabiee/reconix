@@ -18,7 +18,7 @@ $accent: #02C39A;
 
   button[type="submit"] {
     &:not(:disabled):hover {
-      background-color: darken($primary, 8%);
+      background-color: #044a6e;
     }
 
     &:focus-visible {

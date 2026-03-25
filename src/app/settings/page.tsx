@@ -1,10 +1,10 @@
 'use client';
 
 import React from 'react';
-import { PageLayout } from '@/components/layout/PageLayout';
+import { PageLayout } from '@/components/page-layout/page-layout.component';
 import { useAuth } from '@/hooks/useAuth';
-import { LoadingSpinner } from '@/components/ui/LoadingSpinner';
-import { ErrorBoundary } from '@/components/ui/ErrorBoundary';
+import { LoadingSpinner } from '@/components/loading-spinner/loading-spinner.component';
+import { ErrorBoundary } from '@/components/error-boundary/error-boundary.component';
 import { Copy, Check } from 'lucide-react';
 import { format } from 'date-fns';
 

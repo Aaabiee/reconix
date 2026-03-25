@@ -2,11 +2,11 @@
 
 import React from 'react';
 import { useParams, useRouter } from 'next/navigation';
-import { PageLayout } from '@/components/layout/PageLayout';
-import { StatusBadge } from '@/components/ui/StatusBadge';
-import { Modal } from '@/components/ui/Modal';
-import { LoadingSpinner } from '@/components/ui/LoadingSpinner';
-import { ErrorBoundary } from '@/components/ui/ErrorBoundary';
+import { PageLayout } from '@/components/page-layout/page-layout.component';
+import { StatusBadge } from '@/components/status-badge/status-badge.component';
+import { Modal } from '@/components/modal/modal.component';
+import { LoadingSpinner } from '@/components/loading-spinner/loading-spinner.component';
+import { ErrorBoundary } from '@/components/error-boundary/error-boundary.component';
 import { useApiQuery } from '@/hooks/useApiQuery';
 import { delinkService } from '@/services/delink.service';
 import { format } from 'date-fns';

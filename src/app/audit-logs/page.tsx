@@ -1,18 +1,18 @@
 'use client';
 
 import React from 'react';
-import { PageLayout } from '@/components/layout/PageLayout';
-import { DataTable, Column } from '@/components/ui/DataTable';
-import { SearchFilterForm } from '@/components/forms/SearchFilterForm';
-import { LoadingSpinner } from '@/components/ui/LoadingSpinner';
-import { ErrorBoundary } from '@/components/ui/ErrorBoundary';
+import { PageLayout } from '@/components/page-layout/page-layout.component';
+import { DataTable, Column } from '@/components/data-table/data-table.component';
+import { SearchFilterForm } from '@/components/search-filter/search-filter.component';
+import { LoadingSpinner } from '@/components/loading-spinner/loading-spinner.component';
+import { ErrorBoundary } from '@/components/error-boundary/error-boundary.component';
 import { usePagination } from '@/hooks/usePagination';
 import { useDebounce } from '@/hooks/useDebounce';
 import { useApiQuery } from '@/hooks/useApiQuery';
 import { auditService } from '@/services/audit.service';
 import { AuditLog } from '@/types/models.types';
 import { format } from 'date-fns';
-import { StatusBadge } from '@/components/ui/StatusBadge';
+import { StatusBadge } from '@/components/status-badge/status-badge.component';
 
 export default function AuditLogsPage(): JSX.Element {
   const { page, pageSize, goToPage } = usePagination();

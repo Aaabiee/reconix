@@ -1,10 +1,10 @@
 'use client';
 
 import React from 'react';
-import { PageLayout } from '@/components/layout/PageLayout';
-import { LoadingSpinner } from '@/components/ui/LoadingSpinner';
-import { EmptyState } from '@/components/ui/EmptyState';
-import { ErrorBoundary } from '@/components/ui/ErrorBoundary';
+import { PageLayout } from '@/components/page-layout/page-layout.component';
+import { LoadingSpinner } from '@/components/loading-spinner/loading-spinner.component';
+import { EmptyState } from '@/components/empty-state/empty-state.component';
+import { ErrorBoundary } from '@/components/error-boundary/error-boundary.component';
 import { usePagination } from '@/hooks/usePagination';
 import { useApiQuery } from '@/hooks/useApiQuery';
 import { notificationsService } from '@/services/notifications.service';

@@ -2,12 +2,12 @@
 
 import React from 'react';
 import { useRouter } from 'next/navigation';
-import { PageLayout } from '@/components/layout/PageLayout';
-import { DataTable, Column } from '@/components/ui/DataTable';
-import { StatusBadge } from '@/components/ui/StatusBadge';
-import { SearchFilterForm } from '@/components/forms/SearchFilterForm';
-import { LoadingSpinner } from '@/components/ui/LoadingSpinner';
-import { ErrorBoundary } from '@/components/ui/ErrorBoundary';
+import { PageLayout } from '@/components/page-layout/page-layout.component';
+import { DataTable, Column } from '@/components/data-table/data-table.component';
+import { StatusBadge } from '@/components/status-badge/status-badge.component';
+import { SearchFilterForm } from '@/components/search-filter/search-filter.component';
+import { LoadingSpinner } from '@/components/loading-spinner/loading-spinner.component';
+import { ErrorBoundary } from '@/components/error-boundary/error-boundary.component';
 import { usePagination } from '@/hooks/usePagination';
 import { useDebounce } from '@/hooks/useDebounce';
 import { useApiQuery } from '@/hooks/useApiQuery';

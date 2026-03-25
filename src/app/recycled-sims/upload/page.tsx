@@ -2,9 +2,9 @@
 
 import React from 'react';
 import { useRouter } from 'next/navigation';
-import { PageLayout } from '@/components/layout/PageLayout';
-import { BulkUploadForm } from '@/components/forms/BulkUploadForm';
-import { ErrorBoundary } from '@/components/ui/ErrorBoundary';
+import { PageLayout } from '@/components/page-layout/page-layout.component';
+import { BulkUploadForm } from '@/components/bulk-upload/bulk-upload.component';
+import { ErrorBoundary } from '@/components/error-boundary/error-boundary.component';
 
 export default function BulkUploadPage(): JSX.Element {
   const router = useRouter();
