@@ -4,7 +4,6 @@ import React from 'react';
 import { PageLayout } from '@/components/page-layout/page-layout.component';
 import { DataTable, Column } from '@/components/data-table/data-table.component';
 import { SearchFilterForm } from '@/components/search-filter/search-filter.component';
-import { LoadingSpinner } from '@/components/loading-spinner/loading-spinner.component';
 import { ErrorBoundary } from '@/components/error-boundary/error-boundary.component';
 import { usePagination } from '@/hooks/usePagination';
 import { useDebounce } from '@/hooks/useDebounce';

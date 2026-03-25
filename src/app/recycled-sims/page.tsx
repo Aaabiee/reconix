@@ -6,7 +6,6 @@ import { PageLayout } from '@/components/page-layout/page-layout.component';
 import { DataTable, Column } from '@/components/data-table/data-table.component';
 import { StatusBadge } from '@/components/status-badge/status-badge.component';
 import { SearchFilterForm } from '@/components/search-filter/search-filter.component';
-import { LoadingSpinner } from '@/components/loading-spinner/loading-spinner.component';
 import { ErrorBoundary } from '@/components/error-boundary/error-boundary.component';
 import { usePagination } from '@/hooks/usePagination';
 import { useDebounce } from '@/hooks/useDebounce';
