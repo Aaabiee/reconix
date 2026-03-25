@@ -11,7 +11,7 @@ nav_order: 2
 
 ### Deployment Topology
 
-```text
+```
                          Internet
                             |
                       [Load Balancer]
