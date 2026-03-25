@@ -1,4 +1,4 @@
-import { render, screen, fireEvent } from '@testing-library/react';
+import { render, screen } from '@testing-library/react';
 import '@testing-library/jest-dom';
 import React from 'react';
 import { Sidebar } from './sidebar.component';
@@ -19,7 +19,7 @@ jest.mock('next/link', () => {
 });
 
 jest.mock('next/image', () => {
-  return (props: any) => React.createElement('img', props);
+  return ({ priority, fill, ...props }: any) => React.createElement('img', props);
 });
 
 jest.mock('lucide-react', () => ({

@@ -12,6 +12,15 @@ jest.mock('next/navigation', () => ({
   useSearchParams: () => new URLSearchParams(),
 }));
 
+jest.mock('next/image', () => {
+  const React = require('react');
+  return {
+    __esModule: true,
+    default: ({ priority, fill, ...props }: any) =>
+      React.createElement('img', props),
+  };
+});
+
 jest.mock('next/link', () => {
   const React = require('react');
   return {
