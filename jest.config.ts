@@ -6,7 +6,7 @@ const createJestConfig = nextJest({ dir: './' });
 const config: Config = {
   coverageProvider: 'v8',
   testEnvironment: 'jsdom',
-  setupFilesAfterSetup: ['<rootDir>/jest.setup.ts'],
+  setupFilesAfterEnv: ['<rootDir>/jest.setup.ts'],
   moduleNameMapper: {
     '^@/(.*)$': '<rootDir>/src/$1',
     '\\.scss$': '<rootDir>/__mocks__/styleMock.ts',
@@ -17,7 +17,7 @@ const config: Config = {
     '!**/*.d.ts',
     '!**/__mocks__/**',
   ],
-  testPathIgnorePatterns: ['/node_modules/', '/.next/', '/fast_api/'],
+  testPathIgnorePatterns: ['/node_modules/', '/.next/', '/fast_api/', '/e2e/'],
   transform: {
     '^.+\\.(js|jsx|ts|tsx)$': ['ts-jest', { tsconfig: { jsx: 'react-jsx' } }],
   },

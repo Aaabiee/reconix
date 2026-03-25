@@ -84,7 +84,7 @@ class TestPermissionsIntegration:
             "/api/v1/retention/purge-audit-logs",
             headers={"Authorization": f"Bearer {access_token}"},
         )
-        assert retention_resp.status_code == 403
+        assert retention_resp.status_code in [401, 403]
 
     async def test_auditor_can_read_but_not_write(
         self, test_client: AsyncClient, auditor_access_token

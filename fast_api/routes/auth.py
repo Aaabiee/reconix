@@ -38,7 +38,10 @@ async def login(
         if not user.is_active:
             raise AuthenticationError("Invalid email or password")
 
-        if user.locked_until and user.locked_until > datetime.now(timezone.utc):
+        if user.locked_until and (
+            user.locked_until.replace(tzinfo=user.locked_until.tzinfo or timezone.utc)
+            > datetime.now(timezone.utc)
+        ):
             raise AccountLockedError(
                 unlock_time=user.locked_until.isoformat()
             )

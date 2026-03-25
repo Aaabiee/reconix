@@ -1,5 +1,26 @@
 import '@testing-library/jest-dom';
 
+jest.mock('next/navigation', () => ({
+  useRouter: () => ({
+    push: jest.fn(),
+    replace: jest.fn(),
+    back: jest.fn(),
+    prefetch: jest.fn(),
+    pathname: '/',
+  }),
+  usePathname: () => '/',
+  useSearchParams: () => new URLSearchParams(),
+}));
+
+jest.mock('next/link', () => {
+  const React = require('react');
+  return {
+    __esModule: true,
+    default: ({ children, href, ...props }: any) =>
+      React.createElement('a', { href, ...props }, children),
+  };
+});
+
 Object.defineProperty(window, 'matchMedia', {
   writable: true,
   value: jest.fn().mockImplementation(query => ({

@@ -19,7 +19,7 @@ jest.mock('@/components/loading-spinner/loading-spinner.component', () => ({
     React.createElement('div', { 'data-testid': 'spinner' }, text),
 }));
 
-jest.mock('../../App', () => ({
+jest.mock('../App', () => ({
   __esModule: true,
   default: ({ children }: { children: React.ReactNode }) =>
     React.createElement('div', { 'data-testid': 'app-shell' }, children),

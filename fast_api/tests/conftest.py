@@ -80,7 +80,17 @@ async def test_client(test_engine):
                 await session.rollback()
                 raise
 
+    from fast_api.db import get_read_db
+
     app.dependency_overrides[get_db] = override_get_db
+    app.dependency_overrides[get_read_db] = override_get_db
+    app.state.ready = True
+
+    from fast_api.middleware.rate_limiter import limiter
+    try:
+        limiter.reset()
+    except Exception:
+        pass
 
     transport = ASGITransport(app=app)
     async with AsyncClient(transport=transport, base_url="http://test") as client:

@@ -150,12 +150,15 @@ async def health_check():
             db_healthy = True
 
         pool = engine.pool
-        pool_info = {
-            "pool_size": pool.size(),
-            "checked_in": pool.checkedin(),
-            "checked_out": pool.checkedout(),
-            "overflow": pool.overflow(),
-        }
+        try:
+            pool_info = {
+                "pool_size": pool.size(),
+                "checked_in": pool.checkedin(),
+                "checked_out": pool.checkedout(),
+                "overflow": pool.overflow(),
+            }
+        except AttributeError:
+            pool_info = {}
     except Exception:
         db_healthy = False
 

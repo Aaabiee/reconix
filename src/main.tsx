@@ -4,7 +4,7 @@ import React from 'react';
 import { useRouter } from 'next/navigation';
 import { useAuth } from '@/hooks/useAuth';
 import { LoadingSpinner } from '@/components/loading-spinner/loading-spinner.component';
-import App from '../../App';
+import App from '../App';
 
 interface MainProps {
   children: React.ReactNode;

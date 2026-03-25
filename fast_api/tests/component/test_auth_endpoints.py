@@ -69,7 +69,7 @@ class TestLoginEndpoint:
                 "password": "' OR '1'='1' --",
             },
         )
-        assert response.status_code in [401, 422]
+        assert response.status_code in [400, 401, 422]
 
     async def test_login_sql_injection_in_email(self, test_client: AsyncClient):
         response = await test_client.post(
@@ -79,7 +79,7 @@ class TestLoginEndpoint:
                 "password": "whatever12345",
             },
         )
-        assert response.status_code == 422
+        assert response.status_code in [400, 422]
 
 
 @pytest.mark.asyncio

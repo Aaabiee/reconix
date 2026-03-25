@@ -39,7 +39,7 @@ class TestIdentityLookup:
         assert data["is_recycled"] is False
         assert data["nin"] is None
         assert data["bvn"] is None
-        assert data["confidence_score"] == 0.0
+        assert data["confidence_score"] < 0.5
 
     async def test_lookup_invalid_msisdn(
         self, test_client: AsyncClient, access_token

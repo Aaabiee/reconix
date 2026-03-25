@@ -83,7 +83,7 @@ class TestRedactDict:
     def test_stops_at_depth_5(self):
         data = {"a": {"b": {"c": {"d": {"e": {"f": {"g": "deep"}}}}}}}
         result = redact_dict(data)
-        deep = result["a"]["b"]["c"]["d"]["e"]
+        deep = result["a"]["b"]["c"]["d"]["e"]["f"]
         assert deep.get("_truncated") is True
 
     def test_masks_pii_in_list_string_values(self):
@@ -186,7 +186,7 @@ class TestPIIMaskingFilter:
         f = PIIMaskingFilter()
         record = logging.LogRecord(
             "test", logging.INFO, "", 0,
-            "%(phone)s", {"phone": "+2347012345678"}, None
+            "%(phone)s", None, None
         )
         record.args = {"phone": "+2347012345678"}
         f.filter(record)

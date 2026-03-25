@@ -3,6 +3,7 @@ from __future__ import annotations
 import re
 import json
 import logging
+from urllib.parse import unquote
 from fastapi import Request, status
 from fastapi.responses import JSONResponse
 from starlette.middleware.base import BaseHTTPMiddleware
@@ -52,7 +53,7 @@ class InputSanitizationMiddleware(BaseHTTPMiddleware):
         if request.url.path in EXEMPT_PATHS:
             return await call_next(request)
 
-        query_string = request.url.query or ""
+        query_string = unquote(request.url.query or "")
         if self._check_patterns(query_string):
             return self._blocked_response(request, "query string")
 

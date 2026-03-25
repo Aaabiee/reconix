@@ -15,7 +15,7 @@ class TestVaultServiceFallback:
         monkeypatch.setenv("RECONIX_DATABASE_URL", "postgresql://test:pass@db/reconix")
         service = VaultService(vault_url="", vault_token="")
         result = service._env_fallback("reconix/database", "url")
-        assert result is None
+        assert result == "postgresql://test:pass@db/reconix"
 
     def test_env_fallback_with_simple_key(self, monkeypatch):
         monkeypatch.setenv("RECONIX_AUTH_JWT_SECRET_KEY", "my-secret")

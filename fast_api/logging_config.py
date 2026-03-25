@@ -8,8 +8,8 @@ from typing import Any
 
 
 PII_PATTERNS = [
-    (re.compile(r"\b\d{11}\b"), "***NIN/BVN***"),
     (re.compile(r"(\+234|234|0)[7-9]\d{9}\b"), "***MSISDN***"),
+    (re.compile(r"\b\d{11}\b"), "***NIN/BVN***"),
     (re.compile(r"\b\d{15}\b"), "***IMSI***"),
 ]
 
