@@ -1,0 +1,70 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1200 400" fill="none">
+  <defs>
+    <linearGradient id="bannerBg" x1="0" y1="0" x2="1200" y2="400" gradientUnits="userSpaceOnUse">
+      <stop offset="0%" stop-color="#065A82"/>
+      <stop offset="40%" stop-color="#1C7293"/>
+      <stop offset="100%" stop-color="#054d6a"/>
+    </linearGradient>
+    <pattern id="hexPattern" x="0" y="0" width="60" height="52" patternUnits="userSpaceOnUse">
+      <path d="M30 0l26 15v30L30 60 4 45V15z" stroke="#02C39A" stroke-width="0.5" fill="none" opacity="0.12"/>
+    </pattern>
+    <pattern id="hexPattern2" x="30" y="26" width="60" height="52" patternUnits="userSpaceOnUse">
+      <path d="M30 0l26 15v30L30 60 4 45V15z" stroke="#02C39A" stroke-width="0.5" fill="none" opacity="0.08"/>
+    </pattern>
+    <radialGradient id="glow1" cx="200" cy="150" r="300" gradientUnits="userSpaceOnUse">
+      <stop offset="0%" stop-color="#02C39A" stop-opacity="0.15"/>
+      <stop offset="100%" stop-color="#02C39A" stop-opacity="0"/>
+    </radialGradient>
+    <radialGradient id="glow2" cx="900" cy="250" r="350" gradientUnits="userSpaceOnUse">
+      <stop offset="0%" stop-color="#1C7293" stop-opacity="0.2"/>
+      <stop offset="100%" stop-color="#1C7293" stop-opacity="0"/>
+    </radialGradient>
+  </defs>
+  <rect width="1200" height="400" fill="url(#bannerBg)"/>
+  <rect width="1200" height="400" fill="url(#hexPattern)"/>
+  <rect width="1200" height="400" fill="url(#hexPattern2)"/>
+  <circle cx="200" cy="150" r="300" fill="url(#glow1)"/>
+  <circle cx="900" cy="250" r="350" fill="url(#glow2)"/>
+  <g stroke="#02C39A" stroke-width="0.8" opacity="0.15">
+    <line x1="100" y1="80" x2="250" y2="140"/>
+    <line x1="250" y1="140" x2="400" y2="90"/>
+    <line x1="400" y1="90" x2="550" y2="180"/>
+    <line x1="550" y1="180" x2="700" y2="120"/>
+    <line x1="700" y1="120" x2="850" y2="200"/>
+    <line x1="850" y1="200" x2="1000" y2="130"/>
+    <line x1="1000" y1="130" x2="1100" y2="170"/>
+    <line x1="150" y1="250" x2="300" y2="310"/>
+    <line x1="300" y1="310" x2="500" y2="270"/>
+    <line x1="500" y1="270" x2="650" y2="330"/>
+    <line x1="650" y1="330" x2="800" y2="280"/>
+    <line x1="800" y1="280" x2="950" y2="340"/>
+    <line x1="950" y1="340" x2="1100" y2="300"/>
+    <line x1="250" y1="140" x2="300" y2="310"/>
+    <line x1="550" y1="180" x2="500" y2="270"/>
+    <line x1="700" y1="120" x2="650" y2="330"/>
+    <line x1="850" y1="200" x2="800" y2="280"/>
+    <line x1="1000" y1="130" x2="950" y2="340"/>
+  </g>
+  <g fill="#02C39A" opacity="0.25">
+    <circle cx="100" cy="80" r="4"/>
+    <circle cx="250" cy="140" r="5"/>
+    <circle cx="400" cy="90" r="3"/>
+    <circle cx="550" cy="180" r="5"/>
+    <circle cx="700" cy="120" r="4"/>
+    <circle cx="850" cy="200" r="5"/>
+    <circle cx="1000" cy="130" r="3"/>
+    <circle cx="1100" cy="170" r="4"/>
+    <circle cx="150" cy="250" r="3"/>
+    <circle cx="300" cy="310" r="5"/>
+    <circle cx="500" cy="270" r="4"/>
+    <circle cx="650" cy="330" r="5"/>
+    <circle cx="800" cy="280" r="3"/>
+    <circle cx="950" cy="340" r="4"/>
+    <circle cx="1100" cy="300" r="3"/>
+  </g>
+  <g fill="#FFFFFF" opacity="0.08">
+    <circle cx="180" cy="180" r="60"/>
+    <circle cx="750" cy="100" r="45"/>
+    <circle cx="1050" cy="280" r="55"/>
+  </g>
+</svg>

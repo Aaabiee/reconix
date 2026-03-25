@@ -1,0 +1,9 @@
+$primary: #065A82;
+$secondary: #1C7293;
+$accent: #02C39A;
+
+.stats-overview {
+  @media (max-width: 768px) {
+    gap: 1rem;
+  }
+}

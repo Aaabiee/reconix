@@ -1,0 +1,17 @@
+$primary: #065A82;
+$secondary: #1C7293;
+$accent: #02C39A;
+
+.loading-spinner {
+  [role="status"] {
+    border-color: rgba($primary, 0.2);
+    border-top-color: $primary;
+    animation: spinner-rotate 0.8s linear infinite;
+  }
+
+  @keyframes spinner-rotate {
+    to {
+      transform: rotate(360deg);
+    }
+  }
+}

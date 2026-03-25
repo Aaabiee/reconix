@@ -1,0 +1,27 @@
+$primary: #065A82;
+$secondary: #1C7293;
+$accent: #02C39A;
+
+.trends-chart {
+  .recharts-wrapper {
+    .recharts-tooltip-cursor {
+      stroke: rgba($primary, 0.1);
+    }
+
+    .recharts-legend-item {
+      cursor: pointer;
+
+      &:hover {
+        opacity: 0.8;
+      }
+    }
+  }
+
+  @media (max-width: 640px) {
+    padding: 1rem;
+
+    h2 {
+      font-size: 1rem;
+    }
+  }
+}

@@ -1,0 +1,28 @@
+$primary: #065A82;
+$secondary: #1C7293;
+$accent: #02C39A;
+
+.empty-state {
+  text-align: center;
+
+  button {
+    transition: background-color 0.2s ease, transform 0.15s ease;
+
+    &:hover {
+      background-color: darken($primary, 8%);
+    }
+
+    &:active {
+      transform: scale(0.97);
+    }
+
+    &:focus-visible {
+      outline: 2px solid $accent;
+      outline-offset: 2px;
+    }
+  }
+
+  @media (max-width: 640px) {
+    padding: 2rem 1rem;
+  }
+}

@@ -1,0 +1,23 @@
+$primary: #065A82;
+$secondary: #1C7293;
+$accent: #02C39A;
+
+.recycled-sims-operator {
+  .recharts-wrapper {
+    .recharts-pie-sector {
+      transition: opacity 0.2s ease;
+
+      &:hover {
+        opacity: 0.85;
+      }
+    }
+  }
+
+  @media (max-width: 640px) {
+    padding: 1rem;
+
+    h2 {
+      font-size: 1rem;
+    }
+  }
+}

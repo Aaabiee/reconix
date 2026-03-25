@@ -1,0 +1,41 @@
+$primary: #065A82;
+$secondary: #1C7293;
+$accent: #02C39A;
+
+.app-header {
+  [role="menu"] {
+    animation: dropdown-enter 0.2s ease-out;
+
+    [role="menuitem"] {
+      &:focus-visible {
+        outline: 2px solid $accent;
+        outline-offset: -2px;
+      }
+    }
+  }
+
+  button[aria-label="Notifications"] {
+    &:focus-visible {
+      outline: 2px solid $accent;
+      outline-offset: 2px;
+    }
+  }
+
+  button[aria-label="User menu"] {
+    &:focus-visible {
+      outline: 2px solid $accent;
+      outline-offset: 2px;
+    }
+  }
+
+  @keyframes dropdown-enter {
+    from {
+      opacity: 0;
+      transform: translateY(-8px);
+    }
+    to {
+      opacity: 1;
+      transform: translateY(0);
+    }
+  }
+}

@@ -1,0 +1,13 @@
+$primary: #065A82;
+$secondary: #1C7293;
+$accent: #02C39A;
+
+.status-badge {
+  white-space: nowrap;
+  letter-spacing: 0.025em;
+  transition: opacity 0.15s ease;
+
+  &:hover {
+    opacity: 0.9;
+  }
+}
