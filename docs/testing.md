@@ -5,22 +5,22 @@ nav_order: 6
 
 # Reconix — Testing
 
-570+ tests across unit, component, integration, E2E, and load test layers.
+678 tests across unit, component, integration, E2E, and load test layers (483 backend, 195 frontend).
 
 ---
 
 ## Test Coverage
 
-| Layer                | Tests    | Coverage                                                                    |
-| -------------------- | -------- | --------------------------------------------------------------------------- |
-| Backend Unit         | 250+     | Validators, security, input guard, crypto, cache, vault, corroboration, PII |
-| Backend Component    | 110+     | All endpoints including identity, NDPR, WebSocket, health, metrics          |
-| Backend Integration  | 100+     | Body injection, IDOR, shell exec, delink unlinking, RBAC, token lifecycle   |
-| Frontend Unit        | 37       | Services, hooks, state management                                           |
-| Frontend Component   | 62       | All 22 components including NotificationBell                                |
-| Frontend Integration | 30+      | Auth flow, dashboard, delink, observability, WebSocket, NDPR                |
-| E2E (Playwright)     | 14       | Auth, security headers, navigation, responsive                              |
-| k6 Load Tests        | 3 suites | Auth (50 VUs), API read-heavy (100 VUs), stress (500 VUs)                   |
+| Layer                | Tests    | Coverage                                                                                  |
+| -------------------- | -------- | ----------------------------------------------------------------------------------------- |
+| Backend Unit         | 273      | Validators, security, input guard, crypto, cache, vault, corroboration, PII               |
+| Backend Component    | 120      | All endpoints including identity, MSISDN status, detection scan, NDPR, WebSocket, health  |
+| Backend Integration  | 90       | Body injection, IDOR, shell exec, delink unlinking, RBAC, token lifecycle                 |
+| Frontend Unit        | 37       | Services, hooks, state management                                                         |
+| Frontend Component   | 62       | All 22 components including NotificationBell                                              |
+| Frontend Integration | 82       | Auth flow, dashboard, delink, observability, WebSocket, NDPR                              |
+| E2E (Playwright)     | 14       | Auth, security headers, navigation, responsive                                            |
+| k6 Load Tests        | 3 suites | Auth (50 VUs), API read-heavy (100 VUs), stress (500 VUs)                                 |
 
 ---
 

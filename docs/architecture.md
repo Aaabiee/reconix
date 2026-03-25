@@ -44,13 +44,14 @@ fast_api/
 ├── api.py                       # Router aggregating 13 route modules
 ├── config.py                    # Pydantic settings with production validation
 ├── db.py                        # Async engine factory, BaseRepository[T], read replica
+├── gunicorn.conf.py             # Gunicorn worker config (CPU*2+1, preload, max_requests)
 ├── websocket.py                 # ConnectionManager for real-time notifications
 ├── logging_config.py            # Structured JSON logging + PII masking
 ├── crypto.py                    # Application-level PII field encryption
 ├── auth/authlib/                # OAuth2, JWT, bcrypt, RBAC, 19 permissions
-├── routes/                      # 12 route modules
+├── routes/                      # 13 route modules
 │   ├── auth.py                  # Login, refresh, logout
-│   ├── recycled_sims.py         # SIM CRUD, bulk upload (10,000 records)
+│   ├── recycled_sims.py         # SIM CRUD, bulk upload (10,000 records), detect
 │   ├── nin_linkages.py          # NIN verification, bulk-check
 │   ├── bvn_linkages.py          # BVN verification, bulk-check
 │   ├── delink_requests.py       # Delink workflow (create/approve/reject/cancel)
@@ -62,11 +63,13 @@ fast_api/
 │   ├── data_subject.py          # NDPR data subject rights
 │   ├── identity.py              # Unified MSISDN status, linkages, corroboration
 │   └── ws.py                    # WebSocket real-time notifications
-├── services/                    # 15 business services (+ adapters, corroboration, sync)
+├── services/                    # 18 business services (including adapters/)
+│   └── sync_orchestrator.py     # Cross-service sync coordination
 ├── models/                      # 12 SQLAlchemy models (+ stakeholder)
 ├── schemas/                     # 12 Pydantic schema modules
 ├── middleware/                   # 14 security/observability middleware
 ├── validators/                  # Nigerian data validators (NIN/BVN/MSISDN/IMSI)
+├── alembic/                     # Database migration scripts (Alembic)
 └── exceptions/                  # 10 custom exception types + handlers
 ```
 
@@ -168,8 +171,11 @@ Client                  Backend                  Database
 ```
 
 - **Frontend**: Multi-stage Node.js build, standalone Next.js output, CDN asset prefix
-- **Backend**: Python 3.12-slim, Gunicorn with Uvicorn workers, non-root user
+- **Backend**: Python 3.13-slim, Gunicorn with Uvicorn workers, non-root user
 - **Database**: PostgreSQL 16 with persistent volume, connection pooling (20+20)
 - **Caching**: Redis with in-memory fallback when not configured
 - **Secrets**: HashiCorp Vault with environment variable fallback
+- **Scripts**: `seed_admin.py` (initial admin user), `check_secrets.py` (pre-commit secret scanner)
+- **Health probes**: `/health/live` (liveness, always 200), `/health/ready` (readiness, 503 until DB connected)
+- **Detection**: `/recycled-sims/detect` triggers a scan that flags SIMs with stale linkages
 - **CI/CD**: GitHub Actions — lint, test, type-check, Docker build, security scan

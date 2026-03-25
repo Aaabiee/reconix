@@ -34,7 +34,7 @@ nav_order: 7
 
 ### Backend Dockerfile
 
-- **Base**: Python 3.12-slim
+- **Base**: Python 3.13-slim
 - **Server**: Gunicorn with Uvicorn workers via `gunicorn.conf.py`
 - **Workers**: Dynamic (`CPU * 2 + 1`, max 9), with `preload_app` and `max_requests=2000`
 - **User**: Non-root (`reconix` user)
@@ -44,7 +44,7 @@ nav_order: 7
 
 ### Frontend Dockerfile
 
-- **Build**: Multi-stage Node.js build
+- **Build**: Multi-stage Node.js 24 build
 - **Output**: Standalone Next.js
 - **CDN**: `NEXT_PUBLIC_CDN_URL` for static asset prefix
 
@@ -105,6 +105,19 @@ GitHub Actions (`.github/workflows/ci.yml`):
 5. **Frontend tests** — `jest --coverage`
 6. **Docker build** — Build and validate container images
 7. **Security scan** — `pip-audit` + `npm audit` + Semgrep SAST
+
+---
+
+## Pre-commit Hook
+
+A pre-commit secret scanner (`scripts/check_secrets.py`) prevents accidental credential commits:
+
+```bash
+# Install the hook
+git config core.hooksPath .githooks
+```
+
+The `.githooks/pre-commit` hook runs `check_secrets.py` against all staged files, blocking commits that contain API keys, private keys, high-entropy tokens, or database URLs with embedded passwords.
 
 ---
 

@@ -45,13 +45,14 @@ Content-Type: application/json
 
 ## Recycled SIMs
 
-| Method  | Endpoint              | Auth           | Description                         |
-| ------- | --------------------- | -------------- | ----------------------------------- |
-| `GET`   | `/recycled-sims`      | Bearer         | List recycled SIMs (paginated)      |
-| `POST`  | `/recycled-sims`      | Admin/Operator | Register a recycled SIM             |
-| `POST`  | `/recycled-sims/bulk` | Admin          | Bulk upload (up to 10,000 records)  |
-| `GET`   | `/recycled-sims/{id}` | Bearer         | SIM detail view                     |
-| `PATCH` | `/recycled-sims/{id}` | Admin/Operator | Update cleanup status               |
+| Method  | Endpoint                | Auth           | Description                                    |
+| ------- | ----------------------- | -------------- | ---------------------------------------------- |
+| `GET`   | `/recycled-sims`        | Bearer         | List recycled SIMs (paginated)                 |
+| `POST`  | `/recycled-sims`        | Admin/Operator | Register a recycled SIM                        |
+| `POST`  | `/recycled-sims/bulk`   | Admin          | Bulk upload (up to 10,000 records)             |
+| `GET`   | `/recycled-sims/{id}`   | Bearer         | SIM detail view                                |
+| `PATCH` | `/recycled-sims/{id}`   | Admin/Operator | Update cleanup status                          |
+| `POST`  | `/recycled-sims/detect` | Admin          | Detection scan: flags SIMs with stale linkages |
 
 **Query parameters for list:** `skip` (default 0), `limit` (1-100, default 50), `cleanup_status` (optional filter)
 
@@ -94,6 +95,8 @@ Content-Type: application/json
 | `GET`  | `/notifications`        | Bearer         | List notifications (paginated) |
 | `POST` | `/notifications`        | Admin/Operator | Send notification              |
 | `GET`  | `/notifications/{id}`   | Bearer         | Notification detail            |
+
+Supported recipient types: `SUBSCRIBER`, `OPERATOR`, `NEXT_OF_KIN`, `NIBSS`.
 
 ---
 
@@ -175,11 +178,13 @@ The `can_assign_to_new_user` field tells telecoms whether a recycled number is s
 
 ## Infrastructure Endpoints
 
-| Method | Endpoint   | Auth   | Description                       |
-| ------ | ---------- | ------ | --------------------------------- |
-| `GET`  | `/health`  | Public | Health check with DB pool status  |
-| `GET`  | `/metrics` | Public | Prometheus-compatible metrics     |
-| `WS`   | `/ws/{ch}` | Bearer | WebSocket real-time notifications |
+| Method | Endpoint        | Auth   | Description                             |
+| ------ | --------------- | ------ | --------------------------------------- |
+| `GET`  | `/health`       | Public | Health check with DB pool status        |
+| `GET`  | `/health/live`  | Public | Liveness probe, always returns 200      |
+| `GET`  | `/health/ready` | Public | Readiness probe, 503 until DB connected |
+| `GET`  | `/metrics`      | Public | Prometheus-compatible metrics           |
+| `WS`   | `/ws/{ch}`      | Bearer | WebSocket real-time notifications       |
 
 ### WebSocket Channels
 

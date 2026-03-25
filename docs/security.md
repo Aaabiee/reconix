@@ -158,6 +158,21 @@ The `JWT_ALGORITHM` config is restricted to a whitelist at startup. If set to an
 - `SENSITIVE_KEYS` set redacts `password`, `token`, `api_key`, `secret`, `authorization`, `cookie`
 - Sentry `before_send` hook scrubs PII keys including `nin`, `bvn`, `msisdn`, `imsi`
 
+### Audit PII Masking
+
+- `_mask_audit_value` masks old/new values in audit log entries before persistence
+- Ensures PII fields (NIN, BVN, MSISDN) are never stored in plaintext in audit diffs
+
+---
+
+## Pre-commit Secret Scanner
+
+A pre-commit hook (`scripts/check_secrets.py`, installed via `.githooks/pre-commit`) scans staged files for accidentally committed secrets:
+
+- API keys, JWT tokens, private keys, AWS credentials, database URLs with passwords
+- Blocks the commit if any high-entropy strings or known secret patterns are detected
+- Runs automatically on `git commit`; install with `git config core.hooksPath .githooks`
+
 ---
 
 ## NDPR Compliance
