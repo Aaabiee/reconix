@@ -1,5 +1,6 @@
 FROM python:3.13-slim AS backend-base
 
+ENV DEBIAN_FRONTEND=noninteractive
 RUN apt-get update && apt-get install -y --no-install-recommends \
     gcc \
     curl \
@@ -38,6 +39,7 @@ RUN npm run build && \
 
 FROM python:3.13-slim
 
+ENV DEBIAN_FRONTEND=noninteractive
 RUN apt-get update && apt-get install -y --no-install-recommends \
     curl \
     nodejs \
