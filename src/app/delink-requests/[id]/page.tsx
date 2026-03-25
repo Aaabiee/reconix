@@ -121,7 +121,7 @@ export default function DelinkRequestDetailPage(): JSX.Element {
                 </div>
                 <div>
                   <label className="text-sm text-secondary-600">Operator</label>
-                  <p className="text-lg text-default mt-1">{request.operatorName}</p>
+                  <p className="text-lg text-default mt-1">{request.operatorCode}</p>
                 </div>
                 <div>
                   <label className="text-sm text-secondary-600">Requested By</label>
