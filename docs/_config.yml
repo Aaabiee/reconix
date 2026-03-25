@@ -42,6 +42,8 @@ defaults:
 
 extra_css:
   - "https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.11.1/styles/github.min.css"
+  - "assets/css/lightbox.css"
 
 extra_javascript:
   - "https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.11.1/highlight.min.js"
+  - "assets/js/lightbox.js"
