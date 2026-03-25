@@ -22,7 +22,7 @@ export default function RecycledSimsPage(): JSX.Element {
   const [status, setStatus] = React.useState('');
   const debouncedSearch = useDebounce(search, 500);
 
-  const { data: result, isLoading, error, refetch } = useApiQuery(
+  const { data: result, isLoading, error } = useApiQuery(
     () =>
       recycledSimsService.getRecycledSims({
         page,
