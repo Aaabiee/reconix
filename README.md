@@ -13,13 +13,15 @@
 </p>
 
 <p align="center">
-  <img src="https://img.shields.io/badge/Python-3.12-blue?logo=python&logoColor=white" alt="Python"/>
+  <img src="https://img.shields.io/badge/Python-3.13-blue?logo=python&logoColor=white" alt="Python"/>
   <img src="https://img.shields.io/badge/FastAPI-0.110+-009688?logo=fastapi&logoColor=white" alt="FastAPI"/>
   <img src="https://img.shields.io/badge/Next.js-16-black?logo=next.js&logoColor=white" alt="Next.js"/>
+  <img src="https://img.shields.io/badge/Node.js-24-339933?logo=node.js&logoColor=white" alt="Node.js"/>
   <img src="https://img.shields.io/badge/TypeScript-5.3-3178C6?logo=typescript&logoColor=white" alt="TypeScript"/>
   <img src="https://img.shields.io/badge/PostgreSQL-16-4169E1?logo=postgresql&logoColor=white" alt="PostgreSQL"/>
   <img src="https://img.shields.io/badge/OWASP_Top_10-Hardened-02C39A" alt="OWASP"/>
-  <img src="https://img.shields.io/badge/Tests-472+-02C39A" alt="Tests"/>
+  <img src="https://img.shields.io/badge/Tests-678+-02C39A" alt="Tests"/>
+  <img src="https://img.shields.io/badge/Docs-GitHub_Pages-blue?logo=github" alt="Docs"/>
 </p>
 
 ---
@@ -88,7 +90,7 @@ Reconix is the **single source of truth** for identity-to-SIM mappings. It conne
 | **Validation** | Pydantic v2 + Zod                   | Schema enforcement on both backend and frontend                       |
 | **UI**         | Tailwind CSS + Recharts + Lucide    | Responsive dashboard with real-time charts                            |
 | **State**      | Zustand                             | Lightweight client-side state management                              |
-| **Testing**    | pytest + Jest + Playwright + k6     | 540+ tests across unit, component, integration, E2E, and load tests   |
+| **Testing**    | pytest + Jest + Playwright + k6     | 678 tests across unit, component, integration, E2E, and load tests    |
 | **CI/CD**      | GitHub Actions                      | Lint, test, type-check, SCSS, Docker build, pip-audit, Semgrep SAST   |
 | **Containers** | Docker + Docker Compose             | Non-root images, multi-stage builds, health checks                    |
 | **Caching**    | Redis (optional)                    | Token blacklist, query caching, with in-memory fallback               |
@@ -103,20 +105,23 @@ Reconix is the **single source of truth** for identity-to-SIM mappings. It conne
 ```text
 reconix/
 ├── fast_api/                        # Backend (FastAPI)
-│   ├── main.py                      # App factory, lifespan, 11 middleware layers
-│   ├── api.py                       # Router aggregation (10 route modules)
+│   ├── main.py                      # App factory, lifespan, 14 middleware layers
+│   ├── api.py                       # Router aggregation (13 route modules)
 │   ├── config.py                    # Pydantic settings with production validation
-│   ├── db.py                        # Async engine factory, BaseRepository[T]
+│   ├── db.py                        # Async engine factory, BaseRepository[T], read replica
+│   ├── websocket.py                 # ConnectionManager with per-user limits
+│   ├── gunicorn.conf.py             # Dynamic workers, preload, max_requests recycling
 │   ├── logging_config.py            # Structured JSON logging + PII masking
 │   ├── crypto.py                    # Application-level PII field encryption
-│   ├── auth/authlib/                # OAuth2, JWT, bcrypt, RBAC, permissions
-│   ├── routes/                      # 12 route modules (+ data_subject, ws)
-│   ├── services/                    # 12 business services (+ cache, vault, data_subject)
-│   ├── models/                      # 11 SQLAlchemy models
-│   ├── schemas/                     # 11 Pydantic schema modules
+│   ├── auth/authlib/                # OAuth2, JWT, bcrypt, RBAC, 19 permissions
+│   ├── routes/                      # 13 route modules (+ identity, data_subject, ws)
+│   ├── services/                    # 14 business services (+ adapters, corroboration)
+│   ├── models/                      # 12 SQLAlchemy models (+ stakeholder)
+│   ├── schemas/                     # 12 Pydantic schema modules
 │   ├── middleware/                   # 14 security/observability middleware
 │   ├── validators/                  # Nigerian data validators (NIN/BVN/MSISDN/IMSI)
 │   ├── exceptions/                  # 10 custom exception types + handlers
+│   ├── alembic/                     # Database migrations (async, all models imported)
 │   └── tests/                       # unit/ + component/ + integration/
 ├── src/                             # Frontend (Next.js)
 │   ├── app/                         # App Router pages (9 routes)
@@ -139,14 +144,23 @@ reconix/
 │   ├── generate_sdk.py              # OpenAPI client SDK generator
 │   ├── backup_db.py                 # PostgreSQL backup with retention
 │   ├── restore_db.py                # PostgreSQL restore with validation
-│   └── health_check.py              # Uptime monitoring health poller
+│   ├── health_check.py              # Uptime monitoring health poller
+│   ├── seed_admin.py                # Initial admin user setup
+│   └── check_secrets.py             # Pre-commit secret leak scanner
 ├── load_tests/
 │   ├── k6_auth.js                   # Auth flow load test (50 VUs)
 │   ├── k6_api.js                    # API read-heavy load test (100 VUs)
 │   └── k6_stress.js                 # Stress test (500 VUs)
-├── .github/workflows/ci.yml         # CI pipeline
-├── docker-compose.yml               # Orchestration
-├── Dockerfile / Dockerfile.build    # Container images
+├── infra/k8s/
+│   ├── deployment.yaml              # K8s deployment, service, PDB, HPA
+│   └── multi-region.yaml            # Multi-region ingress, secrets, failover
+├── .github/workflows/
+│   ├── ci.yml                       # CI: test, lint, Docker build, security scan
+│   └── pages.yml                    # GitHub Pages deployment (Jekyll RTD)
+├── .githooks/pre-commit             # Python secret scanner hook
+├── docker-compose.yml               # Orchestration (localhost-only DB port)
+├── Dockerfile                       # Multi-stage: Python 3.13 + Node 24
+├── gunicorn.conf.py                 # Dynamic workers, preload, max_requests
 └── ROADMAP.md                       # Production readiness tracker
 ```
 
@@ -178,13 +192,18 @@ reconix/
 | `POST` | `/api/v1/data-subject/delete-my-data`  | Bearer         | Request data deletion (NDPR right to erasure)        |
 | `GET`  | `/api/v1/data-subject/consent`         | Bearer         | View consent record                                  |
 | `POST` | `/api/v1/data-subject/access-request`  | Bearer         | Submit NDPR data subject access request              |
-| `GET`  | `/api/v1/identity/lookup`              | Bearer         | Unified identity mapping for an MSISDN               |
+| `POST` | `/api/v1/recycled-sims/detect`         | Admin          | Detection scan: flag SIMs with stale linkages        |
+| `GET`  | `/api/v1/identity/msisdn/{num}/status` | Bearer         | MSISDN lifecycle status and assignment readiness     |
+| `GET`  | `/api/v1/identity/msisdn/{n}/linkages` | Bearer         | Full NIN/BVN linkage history for an MSISDN           |
+| `GET`  | `/api/v1/identity/lookup`              | Bearer         | Unified identity mapping with confidence score       |
 | `POST` | `/api/v1/identity/batch-lookup`        | Admin/Operator | Batch identity mapping (up to 100 MSISDNs)           |
 | `GET`  | `/api/v1/identity/corroborate`         | Admin          | Cross-reference with external stakeholder systems    |
 | `GET`  | `/api/v1/identity/conflicts`           | Admin/Auditor  | List data conflicts across sources                   |
 | `WS`   | `/ws/{channel}`                        | Bearer (query) | Real-time notifications via WebSocket                |
 | `GET`  | `/health`                              | Public         | Health check with DB pool status                     |
-| `GET`  | `/metrics`                             | Public         | Prometheus-compatible metrics                        |
+| `GET`  | `/health/live`                         | Public         | Liveness probe (always 200)                          |
+| `GET`  | `/health/ready`                        | Public         | Readiness probe (503 until DB connected)             |
+| `GET`  | `/metrics`                             | Public (prod)  | Prometheus metrics (IP-restricted in production)     |
 
 ---
 
@@ -301,7 +320,7 @@ Reconix is hardened against the full OWASP Top 10:
 | A01: Broken Access Control     | **Hardened** | RBAC (4 roles, 19 permissions), IDOR protection, user-scoped idempotency    |
 | A02: Cryptographic Failures    | **Hardened** | bcrypt (12 rounds), HMAC-SHA256 PII encryption, no plaintext fallback       |
 | A03: Injection                 | **Hardened** | SQLAlchemy ORM (parameterized), input guard blocks SQLi/XSS/RCE patterns    |
-| A04: Insecure Design           | **Hardened** | Defense-in-depth (11 middleware layers), rate limiting, account lockout     |
+| A04: Insecure Design           | **Hardened** | Defense-in-depth (14 middleware layers), rate limiting, account lockout     |
 | A05: Security Misconfiguration | **Hardened** | Production config validation, strict CSP (no unsafe-eval), docs hidden      |
 | A06: Vulnerable Components     | **Hardened** | pip-audit + npm audit + Semgrep SAST in CI                                  |
 | A07: Auth Failures             | **Hardened** | Token rotation, JTI revocation, timing-safe dummy verify, 5-attempt lockout |
@@ -334,8 +353,8 @@ Every request passes through:
 
 ### Prerequisites
 
-- Python 3.12+
-- Node.js 20+
+- Python 3.13+
+- Node.js 24+
 - PostgreSQL 16 (or Docker)
 
 ### Backend
@@ -377,7 +396,7 @@ docker compose up -d
 
 ## Testing
 
-### Backend (340+ tests)
+### Backend (483 tests)
 
 ```bash
 pipenv run pytest -q
@@ -410,15 +429,15 @@ k6 run load_tests/k6_stress.js --env ACCESS_TOKEN=<token>
 
 | Layer                | Tests    | Coverage                                                                         |
 | -------------------- | -------- | -------------------------------------------------------------------------------- |
-| Backend Unit         | 230+     | Validators, security, input guard, audit PII, crypto, tracing, cache, vault      |
-| Backend Component    | 95+      | All endpoints with auth/role, NDPR data subject, WebSocket, health, metrics      |
-| Backend Integration  | 85+      | Body injection, IDOR, shell exec, RBAC, NDPR, token lifecycle, JTI revocation    |
+| Backend Unit         | 250+     | Validators, security, input guard, audit PII, crypto, corroboration, adapters    |
+| Backend Component    | 110+     | All 13 routes with auth/role, identity, NDPR, WebSocket, health, metrics         |
+| Backend Integration  | 100+     | Body injection, IDOR, delink unlinking, RBAC, NDPR, token lifecycle, detection   |
 | Frontend Unit        | 37       | Services, hooks, state management                                                |
 | Frontend Component   | 62       | All 22 components including NotificationBell                                     |
 | Frontend Integration | 30+      | Auth flow, dashboard, delink, observability, WebSocket, NDPR                     |
 | E2E (Playwright)     | 14       | Auth, security headers, navigation, responsive                                   |
 | k6 Load Tests        | 3 suites | Auth load (50 VUs), API read-heavy (100 VUs), stress (500 VUs)                   |
-| **Total**            | **540+** |                                                                                  |
+| **Total**            | **678**  |                                                                                  |
 
 ---
 
@@ -480,13 +499,15 @@ See [.env.example](.env.example) for the complete list.
                           Port 5432
 ```
 
-- **Frontend**: Multi-stage Node.js build, standalone Next.js output
-- **Backend**: Python 3.12-slim, Gunicorn with Uvicorn workers, non-root user
-- **Database**: PostgreSQL 16 with persistent volume, connection pooling (20+20)
-- **CI/CD**: GitHub Actions — lint, test, type-check, Docker build, security scan
+- **Frontend**: Multi-stage Node 24 build, standalone Next.js output, CDN asset prefix
+- **Backend**: Python 3.13-slim, Gunicorn with dynamic workers (`CPU*2+1`), non-root user
+- **Database**: PostgreSQL 16 with persistent volume, connection pooling (20+20), read replica
+- **Migrations**: Alembic async with all 12 models (`pipenv run migrate`)
+- **CI/CD**: GitHub Actions — lint, test, type-check, Docker build, pip-audit, Semgrep SAST
 - **Secrets**: HashiCorp Vault (optional) with env var fallback
-- **Caching**: Redis (optional) with in-memory fallback
-- **Monitoring**: Sentry error tracking, Prometheus metrics, health check poller
+- **Caching**: Redis (optional) with in-memory fallback, rate limiter backend
+- **Monitoring**: Sentry error tracking, Prometheus metrics, health/readiness probes
+- **Security**: Pre-commit secret scanner, webhook HMAC verification, JWT algorithm whitelist
 
 ---
 
@@ -494,7 +515,7 @@ See [.env.example](.env.example) for the complete list.
 
 See [ROADMAP.md](ROADMAP.md) for the full production readiness tracker.
 
-**Completed**: All 53 items across security hardening, deployment, observability, data protection, compliance, caching, CDN, read replicas, WebSocket, load testing, and multi-region deployment.
+**Completed**: All 70 items across 5 phases — security hardening, deployment, observability, data protection, compliance, performance, stakeholder aggregation, and multi-region deployment.
 
 **Remaining**: None — all roadmap items implemented.
 
@@ -504,6 +525,7 @@ See [ROADMAP.md](ROADMAP.md) for the full production readiness tracker.
 
 | Document              | Location                                                                       |
 | --------------------- | ------------------------------------------------------------------------------ |
+| GitHub Pages (live)   | [aaabiee.github.io/reconix](https://aaabiee.github.io/reconix/)               |
 | Architecture          | [docs/architecture/](docs/architecture/)                                       |
 | Database Architecture | [database-architecture.md](docs/data-model/database-architecture.md)           |
 | Data Model (ERD)      | [docs/data-model/](docs/data-model/)                                           |
