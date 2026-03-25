@@ -1,6 +1,5 @@
 'use client';
 
-import React from 'react';
 import { PageLayout } from '@/components/page-layout/page-layout.component';
 import { LoadingSpinner } from '@/components/loading-spinner/loading-spinner.component';
 import { EmptyState } from '@/components/empty-state/empty-state.component';

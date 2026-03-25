@@ -1,6 +1,5 @@
 'use client';
 
-import React from 'react';
 import { useRouter } from 'next/navigation';
 import { PageLayout } from '@/components/page-layout/page-layout.component';
 import { BulkUploadForm } from '@/components/bulk-upload/bulk-upload.component';

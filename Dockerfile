@@ -5,7 +5,7 @@ RUN apt-get update && apt-get install -y --no-install-recommends \
     curl \
     && rm -rf /var/lib/apt/lists/*
 
-RUN pip install --no-cache-dir pipenv
+RUN pip install --no-cache-dir --root-user-action=ignore pipenv
 
 WORKDIR /app
 

@@ -4,6 +4,7 @@ title: Reconix
 description: "National-scale identity reconciliation platform for Nigeria"
 
 baseurl: "/reconix"
+url: "https://aaabiee.github.io"
 
 plugins:
   - jekyll-remote-theme
@@ -40,7 +41,7 @@ defaults:
       layout: "default"
 
 extra_css:
-  - "https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.11.1/styles/github-dark.min.css"
+  - "https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.11.1/styles/github.min.css"
 
 extra_javascript:
   - "https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.11.1/highlight.min.js"

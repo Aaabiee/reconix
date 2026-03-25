@@ -1,6 +1,5 @@
 'use client';
 
-import React from 'react';
 import { PageLayout } from '@/components/page-layout/page-layout.component';
 import { StatsOverview } from '@/components/stats-overview/stats-overview.component';
 import { TrendsChart } from '@/components/trends-chart/trends-chart.component';
