@@ -178,8 +178,8 @@ reconix/
 | `POST` | `/api/v1/data-subject/delete-my-data`  | Bearer         | Request data deletion (NDPR right to erasure)        |
 | `GET`  | `/api/v1/data-subject/consent`         | Bearer         | View consent record                                  |
 | `POST` | `/api/v1/data-subject/access-request`  | Bearer         | Submit NDPR data subject access request              |
-| `GET`  | `/api/v1/identity/lookup`              | Bearer         | Unified identity mapping for an MSISDN              |
-| `POST` | `/api/v1/identity/batch-lookup`        | Admin/Operator | Batch identity mapping (up to 100 MSISDNs)          |
+| `GET`  | `/api/v1/identity/lookup`              | Bearer         | Unified identity mapping for an MSISDN               |
+| `POST` | `/api/v1/identity/batch-lookup`        | Admin/Operator | Batch identity mapping (up to 100 MSISDNs)           |
 | `GET`  | `/api/v1/identity/corroborate`         | Admin          | Cross-reference with external stakeholder systems    |
 | `GET`  | `/api/v1/identity/conflicts`           | Admin/Auditor  | List data conflicts across sources                   |
 | `WS`   | `/ws/{channel}`                        | Bearer (query) | Real-time notifications via WebSocket                |
@@ -200,8 +200,8 @@ Reconix uses PostgreSQL 16 with async SQLAlchemy 2.0, an optional read replica f
 │            │  │  │                │  │  │                  │
 │ id      PK │  │  │ id          PK │  │  │ id            PK │
 │ email      │  │  │ sim_serial     │  │  │ recycled_sim_id→ │──► recycled_sims
-│ role  ENUM │  │  │ msisdn         │  │  │ initiated_by  → │──► users
-│ is_active  │  │  │ imsi           │  │  │ approved_by   → │──► users
+│ role  ENUM │  │  │ msisdn         │  │  │ initiated_by  →  │──► users
+│ is_active  │  │  │ imsi           │  │  │ approved_by   →  │──► users
 │ locked_    │  │  │ operator_code  │  │  │ request_type     │
 │  until     │  │  │ cleanup_status │  │  │ status      ENUM │
 └────────────┘  │  │   ENUM         │  │  │ reason           │
