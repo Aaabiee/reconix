@@ -1,15 +1,9 @@
 'use client';
 
 import React, { useState, useRef, useEffect, useCallback } from 'react';
-import { Bell, X, CheckCircle, AlertTriangle, Info } from 'lucide-react';
+import { Bell, CheckCircle, AlertTriangle, Info } from 'lucide-react';
 import { useWebSocket } from '@/hooks/useWebSocket';
 import './notification-bell.component.scss';
-
-interface NotificationItem {
-  type: string;
-  data: Record<string, unknown>;
-  timestamp?: string;
-}
 
 const ICON_MAP: Record<string, React.ReactNode> = {
   success: React.createElement(CheckCircle, { size: 16, className: 'text-green-500' }),
