@@ -9,29 +9,28 @@ nav_order: 2
 
 ![System Architecture](assets/img/system-architecture.png)
 
-<details>
-<summary>Text-based diagram (for terminals)</summary>
+### Deployment Topology
+
 ```text
-                   Internet
-                       |
-                 [Load Balancer]
-                   /         \
-          [Frontend]         [Backend]
-          Next.js 16         FastAPI + Gunicorn
-          Port 3000          Port 8000
-               |                  |
-               |            +-----+------+
-               |            |            |
-               |      [PostgreSQL]  [Redis]
-               |       Port 5432    Port 6379
-               |            |
-               |      [Read Replica]
-               |       (optional)
-               |
-         [CDN / CloudFront]
-          (optional, static assets)
+                         Internet
+                            |
+                      [Load Balancer]
+                       /           \
+              [Frontend]           [Backend]
+              Next.js 16           FastAPI + Gunicorn
+              Port 3000            Port 8000
+                   |                    |
+                   |              +-----+-------+
+                   |              |             |
+                   |        [PostgreSQL]    [Redis]
+                   |         Port 5432     Port 6379
+                   |              |
+                   |        [Read Replica]
+                   |         (optional)
+                   |
+             [CDN / CloudFront]
+              (optional, static assets)
 ```
-</details>
 
 ---
 
