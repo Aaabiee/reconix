@@ -32,7 +32,9 @@ COPY public/ ./public/
 
 ENV NEXT_TELEMETRY_DISABLED=1
 ENV NEXT_PUBLIC_API_BASE_URL=http://localhost:8000/api/v1
-RUN npm run build || echo "Frontend build skipped (non-blocking for API-only deploys)"
+RUN npm run build && \
+    mkdir -p /app/.next/standalone /app/.next/static || \
+    (echo "Frontend build skipped" && mkdir -p /app/.next/standalone /app/.next/static /app/public)
 
 FROM python:3.13-slim
 
