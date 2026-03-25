@@ -197,6 +197,97 @@ Reconix operates as a **read-only aggregator** — it connects outbound to stake
 
 ---
 
+## Phase 6: Production Deployment Action Plan
+
+The codebase, architecture, security, and tests are production-grade. The items below are the **operational and infrastructure tasks** required before serving real traffic with Nigerian national identity data (NIN/BVN/MSISDN).
+
+### 6.1 TLS & Network
+
+| ID   | Action                                                              | Priority | Status |
+| ---- | ------------------------------------------------------------------- | -------- | ------ |
+| P-01 | Configure TLS termination (nginx/Caddy reverse proxy or cloud LB)   | CRITICAL |        |
+| P-02 | Obtain and install TLS certificates (Let's Encrypt or CA-signed)    | CRITICAL |        |
+| P-03 | Enforce HSTS preload submission for reconix.ng domain               | HIGH     |        |
+| P-04 | Configure WAF rules at load balancer level (CloudFlare/AWS WAF)     | HIGH     |        |
+
+### 6.2 Stakeholder API Integration
+
+| ID   | Action                                                              | Priority | Status |
+| ---- | ------------------------------------------------------------------- | -------- | ------ |
+| P-05 | Obtain NIMC API credentials and test live NIN verification          | CRITICAL |        |
+| P-06 | Obtain NIBSS API credentials and test live BVN verification         | CRITICAL |        |
+| P-07 | Establish MOU with at least 1 MNO for recycled SIM feed access      | CRITICAL |        |
+| P-08 | Test adapter error handling against real API rate limits and errors | HIGH     |        |
+| P-09 | Configure production stakeholder registry with live endpoints       | HIGH     |        |
+
+### 6.3 Frontend Production Build
+
+| ID   | Action                                                              | Priority | Status |
+| ---- | ------------------------------------------------------------------- | -------- | ------ |
+| P-10 | Fix Next.js standalone build for Docker (resolve all TS errors)     | HIGH     |        |
+| P-11 | Configure production CDN for static assets (CloudFront/Vercel)      | MEDIUM   |        |
+| P-12 | Set up production NEXT_PUBLIC_API_BASE_URL with HTTPS               | HIGH     |        |
+
+### 6.4 Secrets & Configuration
+
+| ID   | Action                                                              | Priority | Status |
+| ---- | ------------------------------------------------------------------- | -------- | ------ |
+| P-13 | Provision HashiCorp Vault instance or AWS Secrets Manager           | CRITICAL |        |
+| P-14 | Generate and store production JWT_SECRET_KEY (min 64 chars)         | CRITICAL |        |
+| P-15 | Generate and store production FIELD_ENCRYPTION_KEY (min 64 chars)   | CRITICAL |        |
+| P-16 | Create production DATABASE_URL with strong credentials              | CRITICAL |        |
+| P-17 | Configure production SENTRY_DSN for error tracking                  | HIGH     |        |
+| P-18 | Configure production REDIS_URL for rate limiting and caching        | HIGH     |        |
+
+### 6.5 Database Operations
+
+| ID   | Action                                                              | Priority | Status |
+| ---- | ------------------------------------------------------------------- | -------- | ------ |
+| P-19 | Generate initial Alembic migration (`pipenv run makemigration`)     | CRITICAL |        |
+| P-20 | Run migration against production database (`pipenv run migrate`)    | CRITICAL |        |
+| P-21 | Create initial admin user (`pipenv run seed`)                       | CRITICAL |        |
+| P-22 | Configure automated daily backup schedule (cron + backup_db.py)     | HIGH     |        |
+| P-23 | Test restore procedure against a staging database                   | HIGH     |        |
+| P-24 | Configure read replica and verify dashboard query routing           | MEDIUM   |        |
+
+### 6.6 Monitoring & Alerting
+
+| ID   | Action                                                              | Priority | Status |
+| ---- | ------------------------------------------------------------------- | -------- | ------ |
+| P-25 | Configure Sentry project with alert rules and team notifications    | HIGH     |        |
+| P-26 | Set up Grafana dashboards for Prometheus metrics                    | HIGH     |        |
+| P-27 | Configure uptime monitoring (health_check.py with Slack webhook)    | HIGH     |        |
+| P-28 | Set up PagerDuty/OpsGenie for critical alert escalation             | MEDIUM   |        |
+| P-29 | Configure log aggregation (ELK/Loki) for structured JSON logs       | MEDIUM   |        |
+
+### 6.7 Notification Delivery
+
+| ID   | Action                                                              | Priority | Status |
+| ---- | ------------------------------------------------------------------- | -------- | ------ |
+| P-30 | Integrate SMS provider (Twilio/Africa's Talking) for former owners  | HIGH     |        |
+| P-31 | Integrate email provider (SendGrid/AWS SES) for bank notifications  | HIGH     |        |
+| P-32 | Configure webhook delivery with retry logic for NIMC/NIBSS          | HIGH     |        |
+| P-33 | Implement SyncService.receive_update() to persist incoming data     | HIGH     |        |
+
+### 6.8 Load Testing & Capacity
+
+| ID   | Action                                                              | Priority | Status |
+| ---- | ------------------------------------------------------------------- | -------- | ------ |
+| P-34 | Run k6 load tests against staging with real PostgreSQL              | HIGH     |        |
+| P-35 | Establish baseline: max RPS, p95 latency, connection pool limits    | HIGH     |        |
+| P-36 | Load test with 10,000 concurrent recycled SIM records               | MEDIUM   |        |
+| P-37 | Verify HPA scaling triggers at expected CPU/memory thresholds       | MEDIUM   |        |
+
+### 6.9 Compliance & Legal
+
+| ID   | Action                                                              | Priority | Status |
+| ---- | ------------------------------------------------------------------- | -------- | ------ |
+| P-38 | Complete NDPR compliance audit with Data Protection Officer         | HIGH     |        |
+| P-39 | Establish Data Processing Agreement (DPA) with each stakeholder     | HIGH     |        |
+| P-40 | Obtain NCC regulatory approval for CleanLink/Reconix platform       | HIGH     |        |
+
+---
+
 ## OWASP Top 10 Compliance Matrix
 
 | OWASP Category                 | Status   | Notes                                                                        |
