@@ -81,7 +81,7 @@ export const DataTable = React.forwardRef<HTMLDivElement, DataTableProps<any>>(
         <div className="data-table data-table--loading bg-white rounded-material-md shadow-elevation-1 overflow-hidden">
           <div className="p-0">
             <div className="border-b border-surface-200 bg-surface-50 px-6 py-3 flex gap-6">
-              {columns.map((col, i) => (
+              {columns.map((_col, i) => (
                 <div key={i} className="skeleton-shimmer h-4 flex-1" />
               ))}
             </div>
