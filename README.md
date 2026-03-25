@@ -511,13 +511,64 @@ See [.env.example](.env.example) for the complete list.
 
 ---
 
-## Roadmap
+## Production Readiness
 
-See [ROADMAP.md](ROADMAP.md) for the full production readiness tracker.
+The codebase, architecture, security, and test suite are production-grade. The following **operational and infrastructure tasks** remain before serving real traffic with Nigerian national identity data.
 
-**Completed**: All 70 items across 5 phases — security hardening, deployment, observability, data protection, compliance, performance, stakeholder aggregation, and multi-region deployment.
+### What's Done (Phases 1-5 — 70/70 items)
 
-**Remaining**: None — all roadmap items implemented.
+Code, security hardening, OWASP Top 10 compliance, RBAC, input validation, PII encryption, rate limiting, token revocation, audit logging, NDPR compliance, stakeholder aggregation, WebSocket, CDN, read replicas, K8s manifests, load tests, CI/CD, pre-commit secret scanner — all implemented and tested.
+
+### What's Needed for Production (Phase 6 — 40 items)
+
+#### TLS & Network (CRITICAL)
+
+- [ ] Configure TLS termination via reverse proxy (nginx/Caddy) or cloud load balancer
+- [ ] Obtain TLS certificates (Let's Encrypt or CA-signed) for reconix.ng
+- [ ] Submit HSTS preload for the domain
+- [ ] Configure WAF rules (CloudFlare/AWS WAF)
+
+#### Stakeholder API Credentials (CRITICAL)
+
+- [ ] Obtain NIMC API credentials and test live NIN verification
+- [ ] Obtain NIBSS API credentials and test live BVN verification
+- [ ] Establish MOU with at least 1 MNO (MTN/Airtel/Glo/9Mobile) for recycled SIM feeds
+- [ ] Test adapter error handling against real API rate limits
+- [ ] Configure stakeholder registry with production endpoints
+
+#### Secrets & Database (CRITICAL)
+
+- [ ] Provision HashiCorp Vault or AWS Secrets Manager
+- [ ] Generate production secrets: `JWT_SECRET_KEY`, `FIELD_ENCRYPTION_KEY` (min 64 chars each)
+- [ ] Create production PostgreSQL with strong credentials
+- [ ] Generate initial Alembic migration (`pipenv run makemigration`)
+- [ ] Run migration and seed admin user (`pipenv run migrate && pipenv run seed`)
+- [ ] Configure automated daily backup schedule (cron + `scripts/backup_db.py`)
+- [ ] Test restore procedure against staging database
+
+#### Monitoring & Notifications (HIGH)
+
+- [ ] Configure Sentry DSN with alert rules
+- [ ] Set up Grafana dashboards for Prometheus `/metrics`
+- [ ] Configure uptime poller with Slack/PagerDuty webhook
+- [ ] Integrate SMS provider (Twilio/Africa's Talking) for former owner alerts
+- [ ] Integrate email provider (SendGrid/AWS SES) for bank notifications
+- [ ] Implement `SyncService.receive_update()` to persist incoming webhook data
+
+#### Frontend & Load Testing (HIGH)
+
+- [ ] Fix Next.js standalone build for Docker production
+- [ ] Configure production CDN for static assets
+- [ ] Run k6 load tests against staging with real PostgreSQL
+- [ ] Establish baseline: max RPS, p95 latency, connection pool limits
+
+#### Compliance & Legal (HIGH)
+
+- [ ] Complete NDPR compliance audit with Data Protection Officer
+- [ ] Establish Data Processing Agreement (DPA) with each stakeholder
+- [ ] Obtain NCC regulatory approval for the platform
+
+See [ROADMAP.md — Phase 6](ROADMAP.md#phase-6-production-deployment-action-plan) for the full 40-item checklist with IDs and status tracking.
 
 ---
 
