@@ -1,0 +1,179 @@
+flowchart TD
+    Event1["EVENT SOURCE:<br/>recycled_sim.detected"]
+    Event2["EVENT SOURCE:<br/>delink.request.submitted"]
+    Event3["EVENT SOURCE:<br/>delink.bank.approved"]
+    Event4["EVENT SOURCE:<br/>delink.completed"]
+    Event5["EVENT SOURCE:<br/>delink.failed"]
+
+    Consume["RabbitMQ Topic<br/>Subscriber Consumes<br/>Event"]
+
+    ResolveTemplate["Look Up Template:<br/>template_key from<br/>event_type"]
+
+    FetchTemplate["Query notification_templates<br/>WHERE template_key = X<br/>AND is_active = true"]
+
+    ResolveRecipient["Resolve Recipients<br/>Based on Event<br/>Type & Role"]
+
+    RecipientLoop["FOR EACH<br/>Recipient"]
+
+    RenderTemplate["Render Template:<br/>1. Load template body<br/>2. Extract variables<br/>3. Substitute values<br/>   {{MSISDN}} → 08012345678<br/>   {{NIN}} → 12****1234<br/>   {{OWNER_NAME}} → John Doe"]
+
+    ValidateContact["Validate Contact<br/>Info:<br/>- SMS: MSISDN format<br/>- Email: @ symbol<br/>- Push: device_token<br/>- In-app: user_id"]
+
+    ChannelDec{"Notification<br/>Channel?"}
+
+    SMSChannel["SMS CHANNEL"]
+    EmailChannel["EMAIL CHANNEL"]
+    PushChannel["PUSH NOTIFICATION"]
+    InAppChannel["IN-APP CHANNEL"]
+
+    SMSSend["1. Connect to AWS SNS<br/>2. Send message<br/>3. Truncate to 160 chars<br/>4. Set retry limit"]
+
+    EmailSend["1. Connect to SendGrid<br/>2. Format HTML body<br/>3. Add logo/styling<br/>4. Include tracking pixel<br/>5. Set reply-to address"]
+
+    PushSend["1. Connect to FCM<br/>2. Create notification<br/>3. Set title (60 chars)<br/>4. Set body (240 chars)<br/>5. Add metadata tags"]
+
+    InAppSend["1. Create notification<br/>   inbox entry<br/>2. Set read_timestamp = null<br/>3. Flag as unread<br/>4. Emit WebSocket event"]
+
+    SendToProvider["Send Message<br/>to Provider<br/>API"]
+
+    ProviderResponse{"Provider<br/>Response<br/>Status?"}
+
+    Queued["Status: QUEUED<br/>(Provider accepted<br/>message for delivery)"]
+
+    Sent["Status: SENT<br/>(Provider confirmed<br/>message sent)"]
+
+    Failed["Status: FAILED<br/>(Provider rejected<br/>or timeout)"]
+
+    CreateNotification["Create notifications<br/>record:<br/>- notification_uuid<br/>- template_id<br/>- recipient_id<br/>- rendered_message<br/>- delivery_status"]
+
+    WaitReceipt["Wait 5 Minutes<br/>for Delivery<br/>Receipt"]
+
+    ReceiptCheck{"Receipt<br/>Received?"}
+
+    UpdateDelivered["Update notifications:<br/>- delivery_status = delivered<br/>- delivery_timestamp = now"]
+
+    SetRetry["Update notifications:<br/>- delivery_status = failed<br/>- retry_count++<br/>- next_retry_at = now+5min<br/>- error_message = timeout"]
+
+    RetryQueue["Queue Notification<br/>for Retry<br/>in 5 minutes"]
+
+    RetryLoop{"Retry<br/>Count<br/>< 5?"}
+
+    MaxRetries["Max Retries<br/>Exceeded"]
+
+    FinalFail["Update notifications:<br/>- delivery_status = failed<br/>- Log error<br/>- Alert Ops"]
+
+    DeliverySuccess["Delivery Success!<br/>Increment metrics:<br/>- delivery success rate<br/>- avg delivery time"]
+
+    RecipientNext{"More<br/>Recipients?"}
+
+    EventComplete["Event Processing<br/>Complete"]
+
+    PublishWebhook["Publish Webhook:<br/>notification.delivered<br/>to any subscribers<br/>monitoring status"]
+
+    MonitorBounce["Monitor Bounce<br/>Reports<br/>from Email Provider"]
+
+    BounceReceived{"Bounce<br/>Reported?"}
+
+    UpdateBounce["Update notifications:<br/>- delivery_status = bounced<br/>- recipient_email invalid<br/>Log: Remove from mailing"]
+
+    Error1["INVALID CONTACT<br/>ERROR"]
+    SkipNotif1["Skip Notification<br/>Log Error in<br/>notifications table"]
+
+    Error2["TEMPLATE NOT FOUND<br/>ERROR"]
+    SkipEvent["Skip Event<br/>Log Error<br/>Alert Ops"]
+
+    Event1 --> Consume
+    Event2 --> Consume
+    Event3 --> Consume
+    Event4 --> Consume
+    Event5 --> Consume
+
+    Consume --> ResolveTemplate
+    ResolveTemplate --> FetchTemplate
+
+    FetchTemplate -->|Found| ResolveRecipient
+    FetchTemplate -->|Not Found| Error2
+    Error2 --> SkipEvent
+    SkipEvent --> End1(["Event Skipped"])
+
+    ResolveRecipient --> RecipientLoop
+
+    RecipientLoop --> RenderTemplate
+    RenderTemplate --> ValidateContact
+
+    ValidateContact -->|Invalid| Error1
+    Error1 --> SkipNotif1
+    SkipNotif1 --> RecipientNext
+
+    ValidateContact -->|Valid| ChannelDec
+
+    ChannelDec -->|SMS| SMSChannel
+    ChannelDec -->|Email| EmailChannel
+    ChannelDec -->|Push| PushChannel
+    ChannelDec -->|In-app| InAppChannel
+
+    SMSChannel --> SMSSend
+    EmailChannel --> EmailSend
+    PushChannel --> PushSend
+    InAppChannel --> InAppSend
+
+    SMSSend --> SendToProvider
+    EmailSend --> SendToProvider
+    PushSend --> SendToProvider
+    InAppSend --> SendToProvider
+
+    SendToProvider --> ProviderResponse
+
+    ProviderResponse -->|202/200| Queued
+    ProviderResponse -->|4xx Error| Failed
+    ProviderResponse -->|5xx/Timeout| Failed
+
+    Queued --> CreateNotification
+    Sent --> CreateNotification
+    Failed --> CreateNotification
+
+    CreateNotification --> WaitReceipt
+
+    WaitReceipt --> ReceiptCheck
+
+    ReceiptCheck -->|Yes| UpdateDelivered
+    ReceiptCheck -->|No| SetRetry
+
+    UpdateDelivered --> DeliverySuccess
+    DeliverySuccess --> PublishWebhook
+    PublishWebhook --> RecipientNext
+
+    SetRetry --> RetryQueue
+    RetryQueue --> RetryLoop
+
+    RetryLoop -->|Yes| WaitReceipt
+    RetryLoop -->|No| MaxRetries
+
+    MaxRetries --> FinalFail
+    FinalFail --> RecipientNext
+
+    RecipientNext -->|Yes| RecipientLoop
+    RecipientNext -->|No| EventComplete
+
+    MonitorBounce -.->|Async| BounceReceived
+    BounceReceived -->|Yes| UpdateBounce
+    UpdateBounce --> End2(["Bounce Processed"])
+
+    EventComplete --> End3(["Notifications<br/>Dispatched"])
+
+    style Event1 fill:#e1f5ff
+    style Event2 fill:#e1f5ff
+    style Event3 fill:#e1f5ff
+    style Event4 fill:#e1f5ff
+    style Event5 fill:#e1f5ff
+    style SMSChannel fill:#fff3e0
+    style EmailChannel fill:#fff3e0
+    style PushChannel fill:#fff3e0
+    style InAppChannel fill:#fff3e0
+    style DeliverySuccess fill:#90EE90
+    style FinalFail fill:#FFB6C6
+    style Error1 fill:#FFB6C6,color:#000
+    style Error2 fill:#FFB6C6,color:#000
+    style End1 fill:#FFB6C6
+    style End2 fill:#90EE90
+    style End3 fill:#90EE90

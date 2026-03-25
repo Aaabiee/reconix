@@ -1,0 +1,265 @@
+sequenceDiagram
+    actor User as Operator User
+    participant API as API Gateway
+    participant Auth as Auth Service
+    participant Delink as Delink Service
+    participant DB as PostgreSQL
+    participant Queue as RabbitMQ
+    participant Bank as Bank API
+    participant SMS as SMS Gateway
+
+    Note over User,SMS: Delink Workflow Sequence
+
+    User->>API: POST /delink<br/>MSISDN, NIN, BVN
+    API->>Auth: Validate JWT Token
+    Auth->>Auth: Verify permissions
+    Auth-->>API: OK
+    API->>Delink: Create delink request
+    Delink->>DB: Insert request<br/>(status: submitted)
+    DB-->>Delink: Request ID
+    Delink->>Queue: Publish<br/>delink.request.created
+    Queue-->>Delink: ACK
+    Delink-->>API: Request ID + status
+    API-->>User: 201 Created
+
+    Queue->>Bank: Process delink event
+    Bank->>Bank: Validate linkage
+    alt Bank Approves
+        Bank->>DB: Update status<br/>bank_approved
+        DB-->>Bank: OK
+        Bank->>Queue: Publish<br/>delink.bank.approved
+    else Bank Rejects
+        Bank->>DB: Update status<br/>bank_rejected
+        DB-->>Bank: OK
+        Bank->>Queue: Publish<br/>delink.bank.rejected
+    end
+
+    Queue->>Delink: Consume approval event
+    Delink->>DB: Fetch request details
+    DB-->>Delink: Request data
+    Delink->>DB: Update status<br/>delink_in_progress
+    DB-->>Delink: OK
+    Delink->>Bank: Execute delink<br/>(update records)
+    Bank-->>Delink: Delink confirmed
+
+    alt Delink Success
+        Delink->>DB: Update status<br/>completed
+        Delink->>Queue: Publish<br/>delink.completed
+        Queue-->>SMS: Send notification
+        SMS->>SMS: Notify operator
+        SMS-->>User: SMS confirmation
+    else Delink Failed
+        Delink->>DB: Update status<br/>failed<br/>+ error message
+        Delink->>Queue: Publish<br/>delink.failed
+    end
+
+---
+
+sequenceDiagram
+    actor Operator as Telecom Operator
+    participant SFTP as SFTP Server
+    participant Reconcile as Reconciliation<br/>Service
+    participant NIMC as NIMC API
+    participant NIBSS as NIBSS API
+    participant DB as PostgreSQL
+    participant Queue as RabbitMQ
+    participant Notify as Notification<br/>Service
+    participant SMS as SMS Gateway
+
+    Note over Operator,SMS: SIM Reconciliation Detection Workflow
+
+    Operator->>SFTP: Export SIM inventory<br/>(daily 02:00 UTC)
+    SFTP-->>Operator: CSV file created
+
+    Reconcile->>SFTP: Scheduled job triggers<br/>(02:15 UTC)
+    Reconcile->>SFTP: Download SIM inventory
+    SFTP-->>Reconcile: CSV data
+
+    Reconcile->>Reconcile: Parse CSV<br/>Extract MSISDN, SIM serial, IMSI
+
+    loop For each MSISDN in CSV
+        Reconcile->>DB: Check current owner
+        DB-->>Reconcile: Current subscriber
+
+        alt MSISDN has recent owner
+            Reconcile->>NIMC: Verify NIN linkage
+            NIMC-->>Reconcile: NIN + name
+            Reconcile->>Reconcile: Compare: current MSISDN<br/>vs previous owner
+
+            alt Recycled SIM Detected
+                Reconcile->>DB: Insert recycled_sims record
+                DB-->>Reconcile: Record ID
+                Reconcile->>DB: Insert nin_linkages
+                DB-->>Reconcile: Linkage ID
+
+                Reconcile->>NIBSS: Check for BVN linkage
+                NIBSS-->>Reconcile: BVN data (if exists)
+
+                alt BVN Found
+                    Reconcile->>DB: Insert bvn_linkages
+                    DB-->>Reconcile: BVN linkage ID
+                end
+
+                Reconcile->>Queue: Publish<br/>recycled_sim.detected
+                Queue-->>Reconcile: ACK
+            end
+        end
+    end
+
+    Note over Reconcile: Once CSV processing complete
+
+    Reconcile->>DB: Summarize results
+    DB-->>Reconcile: Detection stats
+
+    Queue->>Notify: Consume recycled_sim events
+    Notify->>DB: Fetch notification templates
+    DB-->>Notify: Template content
+
+    loop For each detected SIM
+        Notify->>SMS: Send notification<br/>to previous owner
+        SMS->>SMS: Notify about<br/>account takeover risk
+    end
+
+    Notify->>Queue: Publish<br/>reconciliation.completed
+
+    Queue->>Reconcile: Update job status
+    Reconcile->>DB: Store reconciliation stats
+    DB-->>Reconcile: OK
+
+---
+
+sequenceDiagram
+    actor Admin as Admin User
+    participant UI as Admin Dashboard
+    participant API as API Gateway
+    participant Upload as File Upload<br/>Service
+    participant Validate as Validation<br/>Service
+    participant Queue as RabbitMQ
+    participant Process as Batch<br/>Processor
+    participant DB as PostgreSQL
+    participant Notify as Notification<br/>Service
+
+    Note over Admin,Notify: Bulk CSV Upload & Processing Workflow
+
+    Admin->>UI: Select bulk CSV file<br/>(recycled SIMs)
+    UI->>API: POST /bulk/upload<br/>multipart/form-data
+
+    API->>Upload: Process file upload
+    Upload->>Upload: Store temp file<br/>/tmp/upload_xxxxx.csv
+    Upload->>Validate: Validate CSV schema
+    Validate->>Validate: Check headers<br/>& data types
+
+    alt Validation Passes
+        Upload->>Queue: Publish bulk.upload.queued<br/>file_id, row_count
+        Queue-->>Upload: ACK
+        Upload-->>API: 202 Accepted
+        API-->>UI: Job ID + status URL
+
+        Note over Queue: Async processing begins
+
+        Queue->>Process: Consume bulk upload job
+        Process->>Upload: Download temp file
+        Upload-->>Process: CSV stream
+
+        loop Process each CSV row
+            Process->>Validate: Validate row data
+            alt Row Valid
+                Process->>DB: Insert recycled_sims
+                DB-->>Process: Record ID
+                Process->>DB: Insert nin_linkages
+                DB-->>Process: Linkage ID
+                Process->>Queue: Publish<br/>recycled_sim.detected
+            else Row Invalid
+                Process->>Process: Log error
+                Process->>DB: Store error record
+            end
+        end
+
+        Process->>DB: Update bulk job status<br/>completed
+        DB-->>Process: OK
+
+        Note over Queue,Notify: Notifications for detected SIMs
+
+        Queue->>Notify: Consume all queued events
+        loop Generate notifications
+            Notify->>DB: Fetch templates
+            Notify->>DB: Insert notification records
+            Notify->>API: Send SMS/Email
+        end
+
+        UI->>API: Poll /bulk/jobs/{id}<br/>for completion
+        API->>DB: Get job status
+        DB-->>API: Status + results
+        API-->>UI: Display summary<br/>rows processed, errors, created records
+
+    else Validation Fails
+        Validate-->>Upload: Error details
+        Upload-->>API: 400 Bad Request
+        API-->>UI: Show error message<br/>& remediation steps
+    end
+
+---
+
+sequenceDiagram
+    actor User as User/Admin
+    participant UI as Web Browser
+    participant API as API Gateway
+    participant Auth as Auth Service
+    participant Cache as Redis Cache
+    participant DB as PostgreSQL
+
+    Note over User,DB: API Authentication & Authorization Flow
+
+    User->>UI: Enter credentials
+    UI->>API: POST /auth/login<br/>username, password
+
+    API->>Auth: Authenticate user
+    Auth->>DB: Lookup user by username
+    DB-->>Auth: User record + hashed pwd
+
+    alt Password matches
+        Auth->>Auth: Generate JWT token<br/>exp: 24h, sub: user_id
+        Auth->>Auth: Embed claims:<br/>role, permissions, ip_address
+        Auth->>Auth: Sign JWT with RS256<br/>(private key)
+        Auth-->>API: JWT token
+        API->>Cache: Store session<br/>key=user_id, val=token_data
+        Cache-->>API: OK
+        API-->>UI: 200 OK<br/>token, refresh_token, expires_in
+        UI->>UI: Store token in<br/>localStorage
+    else Password incorrect
+        Auth-->>API: 401 Unauthorized
+        API-->>UI: 401 Invalid credentials
+    end
+
+    Note over User,DB: Subsequent API Requests
+
+    User->>UI: Request protected resource
+    UI->>API: GET /reconciliation/sims<br/>Authorization: Bearer {JWT}
+
+    API->>Auth: Validate JWT signature
+    Auth->>Auth: Verify RS256 signature
+    alt Signature valid & token not expired
+        Auth->>Auth: Extract claims
+        Auth->>Cache: Check session<br/>exists & valid
+        Cache-->>Auth: Session data
+        alt Session valid
+            Auth->>Auth: Check permissions<br/>for /reconciliation/sims
+            alt User has read permission
+                Auth-->>API: 200 OK<br/>decoded_claims
+            else Insufficient permission
+                Auth-->>API: 403 Forbidden
+            end
+        else Session invalidated
+            Auth-->>API: 401 Unauthorized<br/>Session expired
+        end
+    else Invalid signature or expired
+        Auth-->>API: 401 Unauthorized
+    end
+
+    alt Authorized
+        API->>DB: Query SIM records
+        DB-->>API: Results
+        API-->>UI: 200 OK<br/>SIM data
+    else Unauthorized
+        API-->>UI: 401/403<br/>Error message
+    end

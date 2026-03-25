@@ -1,0 +1,143 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1100 580" font-family="'Segoe UI', system-ui, -apple-system, sans-serif">
+  <defs>
+    <linearGradient id="abg" x1="0" y1="0" x2="1100" y2="580" gradientUnits="userSpaceOnUse">
+      <stop offset="0%" stop-color="#0A1628"/><stop offset="100%" stop-color="#0F2035"/>
+    </linearGradient>
+    <linearGradient id="ag" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0%" stop-color="#02C39A"/><stop offset="100%" stop-color="#00A17B"/>
+    </linearGradient>
+    <linearGradient id="ab" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0%" stop-color="#1C7293"/><stop offset="100%" stop-color="#065A82"/>
+    </linearGradient>
+    <filter id="sh" x="-3%" y="-3%" width="106%" height="110%">
+      <feDropShadow dx="0" dy="2" stdDeviation="4" flood-color="#000" flood-opacity="0.3"/>
+    </filter>
+  </defs>
+
+  <rect width="1100" height="580" fill="url(#abg)"/>
+
+  <text x="550" y="36" text-anchor="middle" fill="#FFF" font-size="20" font-weight="700">Authentication Flow — Token Lifecycle</text>
+  <text x="550" y="54" text-anchor="middle" fill="#02C39A" font-size="11" letter-spacing="1">JWT + REFRESH TOKEN ROTATION + SERVER-SIDE REVOCATION</text>
+
+  <!-- Swim lane labels -->
+  <rect x="30" y="70" width="130" height="490" rx="8" fill="#0E1F35" stroke="#1C7293" stroke-width="0.6"/>
+  <text x="95" y="90" text-anchor="middle" fill="#02C39A" font-size="11" font-weight="700">Client</text>
+
+  <rect x="180" y="70" width="350" height="490" rx="8" fill="#0E1F35" stroke="#1C7293" stroke-width="0.6"/>
+  <text x="355" y="90" text-anchor="middle" fill="#02C39A" font-size="11" font-weight="700">FastAPI Backend</text>
+
+  <rect x="550" y="70" width="260" height="490" rx="8" fill="#0E1F35" stroke="#1C7293" stroke-width="0.6"/>
+  <text x="680" y="90" text-anchor="middle" fill="#02C39A" font-size="11" font-weight="700">Database</text>
+
+  <rect x="830" y="70" width="240" height="490" rx="8" fill="#0E1F35" stroke="#065A82" stroke-width="0.6"/>
+  <text x="950" y="90" text-anchor="middle" fill="#F59E0B" font-size="11" font-weight="700">Security Checks</text>
+
+  <!-- ═══ LOGIN FLOW ═══ -->
+  <text x="50" y="115" fill="#F59E0B" font-size="9" font-weight="700">LOGIN</text>
+
+  <!-- Step 1: Client sends credentials -->
+  <rect x="42" y="122" width="108" height="24" rx="4" fill="#1A2940" stroke="#1C7293" stroke-width="0.8"/>
+  <text x="96" y="138" text-anchor="middle" fill="#FFF" font-size="8.5">POST /auth/login</text>
+
+  <line x1="150" y1="134" x2="192" y2="134" stroke="#02C39A" stroke-width="1.5" marker-end="url(#arrowG)"/>
+  <defs><marker id="arrowG" markerWidth="6" markerHeight="4" refX="6" refY="2" orient="auto"><polygon points="0,0 6,2 0,4" fill="#02C39A"/></marker></defs>
+
+  <!-- Step 2: Rate limit check -->
+  <rect x="842" y="122" width="216" height="24" rx="4" fill="#2D1A1A" stroke="#EF4444" stroke-width="0.8"/>
+  <text x="950" y="138" text-anchor="middle" fill="#EF4444" font-size="8.5">Rate limit: 5/min per IP</text>
+
+  <!-- Step 3: Backend validates -->
+  <rect x="192" y="122" width="326" height="55" rx="6" fill="#112240" stroke="#1C7293" stroke-width="0.8"/>
+  <text x="200" y="138" fill="#FFF" font-size="8.5" font-weight="600">Validate credentials:</text>
+  <text x="200" y="152" fill="#B0C4DE" font-size="8">1. Lookup user by email</text>
+  <text x="200" y="163" fill="#B0C4DE" font-size="8">2. Check locked_until, is_active</text>
+  <text x="200" y="174" fill="#B0C4DE" font-size="8">3. bcrypt verify (dummy on missing user)</text>
+
+  <line x1="518" y1="148" x2="562" y2="148" stroke="#1C7293" stroke-width="1" stroke-dasharray="3,2"/>
+  <rect x="562" y="136" width="236" height="24" rx="4" fill="#0D1A2E" stroke="#065A82" stroke-width="0.8"/>
+  <text x="680" y="152" text-anchor="middle" fill="#8899AA" font-size="8.5">SELECT from users WHERE email = ?</text>
+
+  <!-- Step 4: Issue tokens -->
+  <rect x="192" y="186" width="326" height="40" rx="6" fill="#0D3B2C" stroke="#02C39A" stroke-width="0.8"/>
+  <text x="200" y="202" fill="#02C39A" font-size="8.5" font-weight="600">Issue tokens:</text>
+  <text x="200" y="216" fill="#7ECABB" font-size="8">access_token (24h, type=access) + refresh_token (7d, jti=unique)</text>
+
+  <line x1="192" y1="206" x2="150" y2="206" stroke="#02C39A" stroke-width="1.5" marker-end="url(#arrowG)"/>
+  <rect x="42" y="194" width="108" height="24" rx="4" fill="#0D3B2C" stroke="#02C39A" stroke-width="0.8"/>
+  <text x="96" y="210" text-anchor="middle" fill="#02C39A" font-size="8.5">Store in cookies</text>
+
+  <rect x="842" y="186" width="216" height="24" rx="4" fill="#1A2D1A" stroke="#02C39A" stroke-width="0.8"/>
+  <text x="950" y="202" text-anchor="middle" fill="#02C39A" font-size="8.5">SameSite=Strict, HttpOnly</text>
+
+  <!-- ═══ REFRESH FLOW ═══ -->
+  <line x1="30" y1="240" x2="1070" y2="240" stroke="#1C7293" stroke-width="0.5" stroke-opacity="0.3"/>
+  <text x="50" y="260" fill="#F59E0B" font-size="9" font-weight="700">REFRESH</text>
+
+  <rect x="42" y="267" width="108" height="24" rx="4" fill="#1A2940" stroke="#1C7293" stroke-width="0.8"/>
+  <text x="96" y="283" text-anchor="middle" fill="#FFF" font-size="8.5">POST /auth/refresh</text>
+
+  <line x1="150" y1="279" x2="192" y2="279" stroke="#02C39A" stroke-width="1.5" marker-end="url(#arrowG)"/>
+
+  <rect x="192" y="267" width="326" height="68" rx="6" fill="#112240" stroke="#1C7293" stroke-width="0.8"/>
+  <text x="200" y="283" fill="#FFF" font-size="8.5" font-weight="600">Token rotation:</text>
+  <text x="200" y="297" fill="#B0C4DE" font-size="8">1. Verify refresh token (type=refresh)</text>
+  <text x="200" y="308" fill="#B0C4DE" font-size="8">2. Check JTI not in revoked_tokens</text>
+  <text x="200" y="319" fill="#B0C4DE" font-size="8">3. Revoke old JTI, issue new pair</text>
+  <text x="200" y="330" fill="#B0C4DE" font-size="8">4. New refresh token gets fresh JTI</text>
+
+  <line x1="518" y1="295" x2="562" y2="295" stroke="#EF4444" stroke-width="1" stroke-dasharray="3,2"/>
+  <rect x="562" y="267" width="236" height="44" rx="4" fill="#0D1A2E" stroke="#EF4444" stroke-width="0.8"/>
+  <text x="680" y="283" text-anchor="middle" fill="#EF4444" font-size="8.5" font-weight="600">Revocation Check</text>
+  <text x="680" y="300" text-anchor="middle" fill="#8899AA" font-size="8">SELECT from revoked_tokens WHERE jti = ?</text>
+  <text x="680" y="308" text-anchor="middle" fill="#8899AA" font-size="8">INSERT old jti INTO revoked_tokens</text>
+
+  <rect x="842" y="267" width="216" height="36" rx="4" fill="#2D1A1A" stroke="#EF4444" stroke-width="0.8"/>
+  <text x="950" y="283" text-anchor="middle" fill="#EF4444" font-size="8.5" font-weight="600">Reuse Detection</text>
+  <text x="950" y="298" text-anchor="middle" fill="#F87171" font-size="8">Old token reuse → 401 Unauthorized</text>
+
+  <!-- ═══ API REQUEST FLOW ═══ -->
+  <line x1="30" y1="350" x2="1070" y2="350" stroke="#1C7293" stroke-width="0.5" stroke-opacity="0.3"/>
+  <text x="50" y="370" fill="#F59E0B" font-size="9" font-weight="700">API REQUEST</text>
+
+  <rect x="42" y="377" width="108" height="24" rx="4" fill="#1A2940" stroke="#1C7293" stroke-width="0.8"/>
+  <text x="96" y="393" text-anchor="middle" fill="#FFF" font-size="8.5">GET /api/v1/sims</text>
+
+  <line x1="150" y1="389" x2="192" y2="389" stroke="#02C39A" stroke-width="1.5" marker-end="url(#arrowG)"/>
+
+  <rect x="192" y="377" width="326" height="55" rx="6" fill="#112240" stroke="#1C7293" stroke-width="0.8"/>
+  <text x="200" y="393" fill="#FFF" font-size="8.5" font-weight="600">OAuth2 Bearer validation:</text>
+  <text x="200" y="407" fill="#B0C4DE" font-size="8">1. Extract Bearer token from Authorization header</text>
+  <text x="200" y="418" fill="#B0C4DE" font-size="8">2. JWT decode + verify exp/type/sub</text>
+  <text x="200" y="429" fill="#B0C4DE" font-size="8">3. Load user from DB, check permissions</text>
+
+  <line x1="518" y1="403" x2="562" y2="403" stroke="#1C7293" stroke-width="1" stroke-dasharray="3,2"/>
+  <rect x="562" y="393" width="236" height="24" rx="4" fill="#0D1A2E" stroke="#065A82" stroke-width="0.8"/>
+  <text x="680" y="409" text-anchor="middle" fill="#8899AA" font-size="8.5">SELECT from users WHERE id = ? (safe int cast)</text>
+
+  <rect x="842" y="377" width="216" height="40" rx="4" fill="#1A2940" stroke="#1C7293" stroke-width="0.8"/>
+  <text x="950" y="393" text-anchor="middle" fill="#FFF" font-size="8.5" font-weight="600">Permission Check</text>
+  <text x="950" y="408" text-anchor="middle" fill="#8899AA" font-size="8">require_permission(Permission.SIM_READ)</text>
+
+  <!-- ═══ LOGOUT FLOW ═══ -->
+  <line x1="30" y1="445" x2="1070" y2="445" stroke="#1C7293" stroke-width="0.5" stroke-opacity="0.3"/>
+  <text x="50" y="465" fill="#F59E0B" font-size="9" font-weight="700">LOGOUT</text>
+
+  <rect x="42" y="472" width="108" height="24" rx="4" fill="#1A2940" stroke="#1C7293" stroke-width="0.8"/>
+  <text x="96" y="488" text-anchor="middle" fill="#FFF" font-size="8.5">POST /auth/logout</text>
+
+  <line x1="150" y1="484" x2="192" y2="484" stroke="#02C39A" stroke-width="1.5" marker-end="url(#arrowG)"/>
+
+  <rect x="192" y="472" width="326" height="36" rx="6" fill="#112240" stroke="#1C7293" stroke-width="0.8"/>
+  <text x="200" y="488" fill="#FFF" font-size="8.5" font-weight="600">Revoke access token JTI</text>
+  <text x="200" y="502" fill="#B0C4DE" font-size="8">Extract JTI from current token, insert into revoked_tokens</text>
+
+  <line x1="518" y1="488" x2="562" y2="488" stroke="#EF4444" stroke-width="1" stroke-dasharray="3,2"/>
+  <rect x="562" y="478" width="236" height="24" rx="4" fill="#0D1A2E" stroke="#EF4444" stroke-width="0.8"/>
+  <text x="680" y="494" text-anchor="middle" fill="#EF4444" font-size="8.5">INSERT jti INTO revoked_tokens</text>
+
+  <rect x="42" y="516" width="108" height="24" rx="4" fill="#0D3B2C" stroke="#02C39A" stroke-width="0.8"/>
+  <text x="96" y="532" text-anchor="middle" fill="#02C39A" font-size="8.5">Clear cookies</text>
+
+  <!-- Footer -->
+  <text x="550" y="565" text-anchor="middle" fill="#4A5568" font-size="9">Tokens: access (24h) + refresh (7d, one-time use) | Revoked JTIs expire with original token TTL | Auto-cleanup via RetentionService</text>
+</svg>

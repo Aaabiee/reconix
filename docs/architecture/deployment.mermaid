@@ -1,0 +1,212 @@
+graph TB
+    subgraph Internet["Internet"]
+        Users["End Users<br/>(Global)"]
+    end
+
+    subgraph AWS_Region_1["AWS Region 1 (Primary) - us-east-1"]
+        subgraph AZ1["Availability Zone 1a"]
+            Node1["Kubernetes Worker Node 1<br/>(compute optimized)"]
+            Node1 -->|"Runs Pods"| APIGw1["API Gateway Pod"]
+            Node1 -->|"Runs Pods"| ReconcilePod1["Reconciliation Service Pod"]
+            Node1 -->|"Runs Pods"| NotifyPod1["Notification Service Pod"]
+        end
+
+        subgraph AZ2["Availability Zone 1b"]
+            Node2["Kubernetes Worker Node 2<br/>(compute optimized)"]
+            Node2 -->|"Runs Pods"| APIGw2["API Gateway Pod"]
+            Node2 -->|"Runs Pods"| ReconcilePod2["Reconciliation Service Pod"]
+            Node2 -->|"Runs Pods"| DelinkPod["Delink Service Pod"]
+        end
+
+        subgraph AZ3["Availability Zone 1c"]
+            Node3["Kubernetes Worker Node 3<br/>(compute optimized)"]
+            Node3 -->|"Runs Pods"| APIGw3["API Gateway Pod"]
+            Node3 -->|"Runs Pods"| ReconcilePod3["Reconciliation Service Pod"]
+            Node3 -->|"Runs Pods"| ReportPod["Reporting Service Pod"]
+        end
+
+        subgraph ELB["Elastic Load Balancing"]
+            NLB["Network Load Balancer<br/>(Layer 4)"]
+            ALB["Application Load Balancer<br/>(Layer 7)"]
+        end
+
+        subgraph Storage_1["Storage & Data"]
+            DBNode1["PostgreSQL Primary<br/>(AZ1a)<br/>500GB EBS"]
+            DBNode2["PostgreSQL Replica 1<br/>(AZ1b)<br/>500GB EBS"]
+            DBNode3["PostgreSQL Replica 2<br/>(AZ1c)<br/>500GB EBS"]
+
+            RedisNode1["Redis Cluster Node 1<br/>(AZ1a)"]
+            RedisNode2["Redis Cluster Node 2<br/>(AZ1b)"]
+            RedisNode3["Redis Cluster Node 3<br/>(AZ1c)"]
+
+            RabbitNode1["RabbitMQ Node 1<br/>(AZ1a)"]
+            RabbitNode2["RabbitMQ Node 2<br/>(AZ1b)"]
+            RabbitNode3["RabbitMQ Node 3<br/>(AZ1c)"]
+        end
+
+        subgraph Network_1["Network"]
+            VPC["VPC: 10.0.0.0/16"]
+            PublicSubnet["Public Subnets<br/>(Load Balancers, NAT)"]
+            PrivateSubnet["Private Subnets<br/>(Worker Nodes, Databases)"]
+            SecurityGroups["Security Groups<br/>(Stateful Firewall)"]
+        end
+
+        NLB -->|"Port 443 HTTPS"| PublicSubnet
+        ALB -->|"Port 80/443"| PublicSubnet
+        PublicSubnet -->|"Routes traffic"| PrivateSubnet
+        Node1 -->|"Part of"| VPC
+        Node2 -->|"Part of"| VPC
+        Node3 -->|"Part of"| VPC
+        DBNode1 -->|"Part of"| PrivateSubnet
+        DBNode2 -->|"Part of"| PrivateSubnet
+        DBNode3 -->|"Part of"| PrivateSubnet
+        RedisNode1 -->|"Part of"| PrivateSubnet
+        RedisNode2 -->|"Part of"| PrivateSubnet
+        RedisNode3 -->|"Part of"| PrivateSubnet
+        PrivateSubnet -->|"Protected by"| SecurityGroups
+
+        DBNode1 -->|"Replicates to"| DBNode2
+        DBNode1 -->|"Replicates to"| DBNode3
+    end
+
+    subgraph AWS_Region_2["AWS Region 2 (Secondary) - eu-west-1"]
+        subgraph AZ4["Availability Zone 2a"]
+            SNode1["K8s Worker Node 1<br/>(Standby)"]
+        end
+
+        subgraph AZ5["Availability Zone 2b"]
+            SNode2["K8s Worker Node 2<br/>(Standby)"]
+        end
+
+        subgraph AZ6["Availability Zone 2c"]
+            SNode3["K8s Worker Node 3<br/>(Standby)"]
+        end
+
+        subgraph Storage_2["Storage & Data"]
+            SDBNode1["PostgreSQL Replica<br/>(Hot Standby)"]
+            SDBNode2["PostgreSQL Replica 2"]
+            SDBNode3["PostgreSQL Replica 3"]
+        end
+
+        SNode1 -->|"Receives"| SDBNode1
+        SNode2 -->|"Receives"| SDBNode2
+        SNode3 -->|"Receives"| SDBNode3
+
+        Note2["Activated only during<br/>regional failover"]
+    end
+
+    subgraph BackupStorage["Backup & Archival - S3"]
+        S3_Primary["S3 Bucket: us-east-1<br/>(WAL Archives, Backups)"]
+        S3_Secondary["S3 Bucket: eu-west-1<br/>(Cross-region replica)"]
+        S3_Archive["S3 Glacier<br/>(90-day archives)"]
+    end
+
+    subgraph GlobalServices["Global AWS Services"]
+        Route53["Route 53<br/>(DNS, Health Checks)"]
+        CloudFront["CloudFront<br/>(CDN)"]
+        KMS["AWS KMS<br/>(Encryption Keys)"]
+        Secrets["Secrets Manager<br/>(API Keys, Passwords)"]
+    end
+
+    subgraph ExternalSystems["External Systems"]
+        NIMC_Server["NIMC API Server<br/>(Nigeria)"]
+        NIBSS_Server["NIBSS API Server<br/>(Nigeria)"]
+        TelecomSFTP["Telecom Operator<br/>SFTP Servers"]
+        BankAPIs["Bank Integration<br/>APIs"]
+    end
+
+    subgraph Monitoring["Monitoring & Observability"]
+        Prometheus["Prometheus<br/>(Time-series DB)"]
+        Grafana["Grafana<br/>(Visualization)"]
+        ELK_Stack["ELK Stack<br/>(Elasticsearch, Logstash, Kibana)"]
+        CloudWatch["CloudWatch<br/>(AWS Native Monitoring)"]
+    end
+
+    %% Primary Region Connections
+    Users -->|"DNS Query"| Route53
+    Route53 -->|"Resolves to"| NLB
+    Route53 -->|"Health check"| APIGw1
+    Users -->|"HTTPS (443)"| NLB
+
+    %% Load Balancer to Kubernetes
+    NLB -->|"Routes traffic"| Node1
+    NLB -->|"Routes traffic"| Node2
+    NLB -->|"Routes traffic"| Node3
+
+    %% Service-to-Database
+    APIGw1 -->|"SQL Connection"| DBNode1
+    ReconcilePod1 -->|"SQL Connection"| DBNode1
+    NotifyPod1 -->|"SQL Connection"| DBNode1
+    ReportPod -->|"SQL Connection"| DBNode1
+
+    %% Service-to-Cache
+    APIGw1 -->|"Redis Pipeline"| RedisNode1
+    ReconcilePod1 -->|"Redis Pipeline"| RedisNode1
+    DelinkPod -->|"Redis Pipeline"| RedisNode1
+
+    %% Service-to-Queue
+    ReconcilePod1 -->|"Publish/Consume"| RabbitNode1
+    NotifyPod1 -->|"Publish/Consume"| RabbitNode1
+    DelinkPod -->|"Publish/Consume"| RabbitNode1
+    ReportPod -->|"Publish/Consume"| RabbitNode1
+
+    %% Backup and Disaster Recovery
+    DBNode1 -->|"Continuous WAL"| S3_Primary
+    S3_Primary -->|"Cross-region"| S3_Secondary
+    S3_Primary -->|"Archive (7+ days)"| S3_Archive
+    DBNode1 -->|"Replicates to"| SDBNode1
+
+    %% Global Services
+    Route53 -->|"Health endpoint"| NLB
+    CloudFront -->|"Cache static assets"| PublicSubnet
+    KMS -->|"Encrypt data at rest"| DBNode1
+    KMS -->|"Encrypt data at rest"| S3_Primary
+    Secrets -->|"Manage credentials"| Node1
+
+    %% External Integrations
+    APIGw1 -->|"REST API<br/>(mutual TLS)"| NIMC_Server
+    ReconcilePod1 -->|"REST API<br/>(mutual TLS)"| NIBSS_Server
+    ReconcilePod1 -->|"SFTP Pull<br/>(key auth)"| TelecomSFTP
+    DelinkPod -->|"REST API<br/>(OAuth 2.0)"| BankAPIs
+
+    %% Monitoring
+    Node1 -->|"Prometheus<br/>metrics"| Prometheus
+    Node2 -->|"Prometheus<br/>metrics"| Prometheus
+    Node3 -->|"Prometheus<br/>metrics"| Prometheus
+    DBNode1 -->|"Metrics"| Prometheus
+    RedisNode1 -->|"Metrics"| Prometheus
+    RabbitNode1 -->|"Metrics"| Prometheus
+
+    Prometheus -->|"Query"| Grafana
+    Node1 -->|"Logs"| ELK_Stack
+    ELK_Stack -->|"Visualize"| Grafana
+
+    CloudWatch -->|"AWS Native"| Node1
+    CloudWatch -->|"AWS Native"| DBNode1
+
+    %% Secondary Region Connection
+    DBNode1 -->|"Streaming<br/>Replication"| SDBNode1
+    Route53 -->|"Failover to"| SNode1
+
+    %% Styling
+    classDef primaryRegion fill:#c8e6c9,stroke:#2e7d32,stroke-width:2px
+    classDef secondaryRegion fill:#ffccbc,stroke:#e64a19,stroke-width:2px
+    classDef kubernetes fill:#bbdefb,stroke:#1565c0,stroke-width:2px
+    classDef database fill:#f8bbd0,stroke:#c2185b,stroke-width:2px
+    classDef cache fill:#e1bee7,stroke:#6a1b9a,stroke-width:2px
+    classDef network fill:#fff9c4,stroke:#f57f17,stroke-width:2px
+    classDef backup fill:#b2dfdb,stroke:#00695c,stroke-width:2px
+    classDef external fill:#ede7f6,stroke:#512da8,stroke-width:2px
+    classDef monitoring fill:#e0f2f1,stroke:#00897b,stroke-width:2px
+    classDef global fill:#fff3e0,stroke:#e65100,stroke-width:2px
+
+    class AWS_Region_1,AZ1,AZ2,AZ3,Storage_1,Network_1 primaryRegion
+    class AWS_Region_2,AZ4,AZ5,AZ6,Storage_2 secondaryRegion
+    class Node1,Node2,Node3,APIGw1,APIGw2,APIGw3,ReconcilePod1,ReconcilePod2,ReconcilePod3,NotifyPod1,DelinkPod,ReportPod kubernetes
+    class DBNode1,DBNode2,DBNode3,SDBNode1,SDBNode2,SDBNode3 database
+    class RedisNode1,RedisNode2,RedisNode3 cache
+    class VPC,PublicSubnet,PrivateSubnet,SecurityGroups,NLB,ALB network
+    class S3_Primary,S3_Secondary,S3_Archive backup
+    class NIMC_Server,NIBSS_Server,TelecomSFTP,BankAPIs external
+    class Prometheus,Grafana,ELK_Stack,CloudWatch monitoring
+    class Route53,CloudFront,KMS,Secrets global

@@ -1,0 +1,46 @@
+remote_theme: carlosperate/jekyll-theme-rtd
+
+title: Reconix
+description: "National-scale identity reconciliation platform for Nigeria"
+
+baseurl: "/reconix"
+
+plugins:
+  - jekyll-remote-theme
+
+nav:
+  - Home: INDEX.md
+  - Architecture: architecture.md
+  - Database Architecture: database.md
+  - Security: security.md
+  - API Reference: api-reference.md
+  - Testing: testing.md
+  - Deployment: deployment.md
+
+exclude:
+  - proposal/
+  - srs/
+  - policy-brief/
+  - pitch-deck/
+  - architecture/architecture.md
+  - data-model/database-architecture.md
+  - data-model/data-dictionary.md
+  - data-model/schema.sql
+  - data-model/erd.mermaid
+  - workflow/
+  - "*.docx"
+  - "*.pptx"
+  - "*.mermaid"
+  - "*.sql"
+
+defaults:
+  - scope:
+      path: ""
+    values:
+      layout: "default"
+
+extra_css:
+  - "https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.11.1/styles/github-dark.min.css"
+
+extra_javascript:
+  - "https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.11.1/highlight.min.js"

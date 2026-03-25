@@ -1,0 +1,167 @@
+flowchart TD
+    ClientStart(["Admin User<br/>Dashboard"])
+    SelectFile["Click 'Upload CSV'<br/>File Picker Opens"]
+    PickFile["Select CSV File<br/>from Computer"]
+
+    ClientValidate["Client-Side Validation:<br/>1. File size < 100MB<br/>2. MIME type = csv<br/>3. Preview first 5 rows<br/>4. Show row count"]
+
+    PreviewOK{"Preview<br/>OK?"}
+
+    UploadClick["Click 'Upload'<br/>Button"]
+
+    UploadStart["POST /api/v1/bulk/upload<br/>Content-Type: multipart/form-data<br/>Request Body:<br/>- file (binary)<br/>- job_name (string)"]
+
+    ServerReceive["Server Receives<br/>Multipart Request"]
+
+    StoreTemp["Store Uploaded File<br/>in /tmp/upload_xxxxxx.csv<br/>with unique suffix"]
+
+    QuickValidate["Quick Validation:<br/>1. File size check<br/>2. Line count<br/>3. Header row exists<br/>4. Required columns<br/>   MSISDN, OPERATOR, etc"]
+
+    QuickPass{"Validation<br/>Pass?"}
+
+    CreateBulkJob["Create bulk_import_jobs<br/>record:<br/>- job_uuid (UUID)<br/>- file_path<br/>- file_size<br/>- row_count<br/>- status = queued<br/>- initiated_by_user_id"]
+
+    Response202["Return 202 Accepted<br/>+ job_uuid<br/>+ status_url"]
+
+    UIProgressPage["Redirect to<br/>Job Progress Page<br/>(polls every 2 seconds)"]
+
+    PublishEvent["Publish Event:<br/>bulk.import.queued<br/>to RabbitMQ<br/>with job_uuid,<br/>file_path, row_count"]
+
+    WorkerStart["Background Worker<br/>Consumes Event"]
+
+    WorkerFetch["Fetch bulk_import_jobs<br/>record"]
+
+    DownloadFile["Download File<br/>from Storage<br/>to Worker Memory"]
+
+    OpenCSV["Open CSV Stream<br/>(don't load entire<br/>file in memory)"]
+
+    RowStart["Get First Row<br/>from CSV Stream"]
+
+    RowLoop{"More<br/>Rows?"]
+
+    ParseRow["Parse CSV Row:<br/>Extract Fields:<br/>- MSISDN<br/>- SIM_SERIAL<br/>- IMSI<br/>- OPERATOR<br/>- PREV_NIN<br/>- PREV_BVN<br/>- ACTIVATION_DATE<br/>- DEACTIVATION_DATE"]
+
+    ValidateRow["Validate Row Data:<br/>1. MSISDN format<br/>   ^(\+234|0)[0-9]{10}$<br/>2. NIN format (if present)<br/>   ^[0-9]{11}$<br/>3. BVN format (if present)<br/>   ^[0-9]{11}$<br/>4. OPERATOR exists<br/>5. Dates valid"]
+
+    RowOK{"Row<br/>Valid?"}
+
+    DupCheck["Check Duplicates:<br/>1. SIM_SERIAL already?<br/>2. MSISDN active linkage?"]
+
+    DupOK{"Duplicate?"}
+
+    InsertSIM["INSERT into recycled_sims<br/>sim_serial_number<br/>msisdn<br/>operator_id<br/>previous_owner_nin<br/>previous_owner_bvn<br/>linkage_status = active<br/>cleanup_status = pending"]
+
+    InsertNIN["INSERT into nin_linkages<br/>(if NIN provided)<br/>msisdn<br/>nin<br/>is_current = true<br/>verification_status = unverified"]
+
+    InsertBVN["INSERT into bvn_linkages<br/>(if BVN provided)<br/>msisdn<br/>bvn<br/>is_current = true<br/>bank_id = lookup"]
+
+    PublishSIMEvent["Publish Event:<br/>recycled_sim.detected<br/>for notification service"]
+
+    SuccessInc["Increment:<br/>rows_succeeded++"]
+
+    ErrorStore["Store Error Record:<br/>- row_number<br/>- error_type<br/>- error_message<br/>- raw_data"]
+
+    ErrorInc["Increment:<br/>rows_failed++"]
+
+    TotalInc["Increment:<br/>rows_processed++"]
+
+    NextRow["Get Next Row<br/>from Stream"]
+
+    LoopNext["Continue Loop"]
+
+    LoopEnd["All Rows<br/>Processed"]
+
+    UpdateJob["Update bulk_import_jobs:<br/>- status = completed<br/>- rows_processed = count<br/>- rows_succeeded = count<br/>- rows_failed = count<br/>- completion_timestamp<br/>- duration_seconds"]
+
+    GenReport["Generate Results<br/>Report:<br/>- Summary statistics<br/>- Top 10 failures<br/>- Success rate %<br/>- Processing duration"]
+
+    StoreResults["Store Report in<br/>bulk_import_results<br/>table"]
+
+    SendEmail["Send Email to<br/>Uploader:<br/>- Summary results<br/>- Attachment:<br/>  error_records.csv<br/>- Link to details"]
+
+    WebSocketUpdate["Send WebSocket<br/>Message to<br/>Dashboard:<br/>- status = completed<br/>- final stats"]
+
+    UIDisplay["Display Results<br/>on Progress Page:<br/>- Progress bar 100%<br/>- Summary table<br/>- Download links<br/>- Error records"]
+
+    End1(["Upload Complete"])
+
+    ErrorQuickValidate["Return 400<br/>Bad Request<br/>+ error message"]
+    End2(["Upload Failed"])
+
+    ClientValidate -->|Invalid| End2
+    ClientValidate -->|Valid| PreviewOK
+
+    PreviewOK -->|Not OK| End2
+    PreviewOK -->|OK| UploadClick
+
+    UploadClick --> UploadStart
+    UploadStart --> ServerReceive
+
+    ServerReceive --> StoreTemp
+    StoreTemp --> QuickValidate
+
+    QuickValidate -->|Failed| ErrorQuickValidate
+    ErrorQuickValidate --> End2
+
+    QuickValidate -->|Passed| CreateBulkJob
+    CreateBulkJob --> Response202
+
+    Response202 --> UIProgressPage
+    CreateBulkJob --> PublishEvent
+
+    PublishEvent --> WorkerStart
+    WorkerStart --> WorkerFetch
+    WorkerFetch --> DownloadFile
+    DownloadFile --> OpenCSV
+
+    OpenCSV --> RowStart
+    RowStart --> RowLoop
+
+    RowLoop -->|No More| LoopEnd
+    RowLoop -->|Yes| ParseRow
+
+    ParseRow --> ValidateRow
+
+    ValidateRow -->|Invalid| ErrorStore
+    ErrorStore --> ErrorInc
+
+    ValidateRow -->|Valid| DupCheck
+
+    DupCheck -->|Duplicate| ErrorStore
+    DupCheck -->|Not Duplicate| InsertSIM
+
+    InsertSIM --> InsertNIN
+    InsertNIN --> InsertBVN
+    InsertBVN --> PublishSIMEvent
+    PublishSIMEvent --> SuccessInc
+
+    SuccessInc --> TotalInc
+    ErrorInc --> TotalInc
+
+    TotalInc --> NextRow
+    NextRow --> LoopNext
+    LoopNext --> RowStart
+
+    RowLoop -->|No| LoopEnd
+
+    LoopEnd --> UpdateJob
+    UpdateJob --> GenReport
+    GenReport --> StoreResults
+    StoreResults --> SendEmail
+    SendEmail --> WebSocketUpdate
+    WebSocketUpdate --> UIDisplay
+    UIDisplay --> End1
+
+    style ClientStart fill:#e3f2fd
+    style ServerReceive fill:#fff3e0
+    style WorkerStart fill:#f3e5f5
+    style InsertSIM fill:#90EE90
+    style InsertNIN fill:#90EE90
+    style InsertBVN fill:#90EE90
+    style SuccessInc fill:#90EE90
+    style ErrorStore fill:#FFB6C6
+    style ErrorInc fill:#FFB6C6
+    style UpdateJob fill:#87CEEB
+    style UIDisplay fill:#e3f2fd
+    style End1 fill:#90EE90
+    style End2 fill:#FFB6C6

@@ -1,0 +1,263 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1100 820" font-family="'Segoe UI', system-ui, -apple-system, sans-serif">
+  <defs>
+    <linearGradient id="bgGrad" x1="0" y1="0" x2="1100" y2="820" gradientUnits="userSpaceOnUse">
+      <stop offset="0%" stop-color="#0A1628"/>
+      <stop offset="100%" stop-color="#0F2035"/>
+    </linearGradient>
+    <linearGradient id="cardDark" x1="0" y1="0" x2="0" y2="1" >
+      <stop offset="0%" stop-color="#122640"/>
+      <stop offset="100%" stop-color="#0E1F35"/>
+    </linearGradient>
+    <linearGradient id="primaryGrad" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0%" stop-color="#1C7293"/>
+      <stop offset="100%" stop-color="#065A82"/>
+    </linearGradient>
+    <linearGradient id="accentGrad" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0%" stop-color="#02C39A"/>
+      <stop offset="100%" stop-color="#00A17B"/>
+    </linearGradient>
+    <linearGradient id="warnGrad" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0%" stop-color="#F59E0B"/>
+      <stop offset="100%" stop-color="#D97706"/>
+    </linearGradient>
+    <filter id="shadow" x="-4%" y="-4%" width="108%" height="112%">
+      <feDropShadow dx="0" dy="2" stdDeviation="6" flood-color="#000" flood-opacity="0.35"/>
+    </filter>
+    <filter id="glow">
+      <feGaussianBlur stdDeviation="3" result="blur"/>
+      <feMerge><feMergeNode in="blur"/><feMergeNode in="SourceGraphic"/></feMerge>
+    </filter>
+  </defs>
+
+  <!-- Background -->
+  <rect width="1100" height="820" fill="url(#bgGrad)"/>
+  <rect width="1100" height="820" fill="none" stroke="#1C7293" stroke-opacity="0.06" stroke-width="1">
+    <animate attributeName="stroke-opacity" values="0.04;0.08;0.04" dur="4s" repeatCount="indefinite"/>
+  </rect>
+
+  <!-- Title -->
+  <text x="550" y="42" text-anchor="middle" fill="#FFFFFF" font-size="22" font-weight="700" letter-spacing="0.5">Reconix System Architecture</text>
+  <text x="550" y="62" text-anchor="middle" fill="#02C39A" font-size="12" font-weight="500" letter-spacing="1.5" text-transform="uppercase">National-Scale Identity Reconciliation Platform</text>
+
+  <!-- ═══ INTERNET / CLIENTS LAYER ═══ -->
+  <rect x="30" y="82" width="1040" height="90" rx="10" fill="url(#cardDark)" stroke="#1C7293" stroke-width="1" stroke-opacity="0.3" filter="url(#shadow)"/>
+  <text x="55" y="102" fill="#02C39A" font-size="10" font-weight="600" letter-spacing="1.2">CLIENTS</text>
+
+  <!-- Browser -->
+  <rect x="60" y="112" width="140" height="46" rx="6" fill="#1A2940" stroke="#1C7293" stroke-width="1"/>
+  <text x="130" y="130" text-anchor="middle" fill="#FFFFFF" font-size="11" font-weight="600">Web Browser</text>
+  <text x="130" y="148" text-anchor="middle" fill="#8899AA" font-size="9">React / Next.js 16</text>
+
+  <!-- Mobile -->
+  <rect x="230" y="112" width="140" height="46" rx="6" fill="#1A2940" stroke="#1C7293" stroke-width="1"/>
+  <text x="300" y="130" text-anchor="middle" fill="#FFFFFF" font-size="11" font-weight="600">Mobile App</text>
+  <text x="300" y="148" text-anchor="middle" fill="#8899AA" font-size="9">REST API Client</text>
+
+  <!-- API Consumers -->
+  <rect x="400" y="112" width="140" height="46" rx="6" fill="#1A2940" stroke="#1C7293" stroke-width="1"/>
+  <text x="470" y="130" text-anchor="middle" fill="#FFFFFF" font-size="11" font-weight="600">API Consumers</text>
+  <text x="470" y="148" text-anchor="middle" fill="#8899AA" font-size="9">OpenAPI SDK</text>
+
+  <!-- Stakeholders -->
+  <rect x="570" y="112" width="140" height="46" rx="6" fill="#1A2940" stroke="#F59E0B" stroke-width="1"/>
+  <text x="640" y="130" text-anchor="middle" fill="#FFFFFF" font-size="11" font-weight="600">NIMC / NIBSS</text>
+  <text x="640" y="148" text-anchor="middle" fill="#8899AA" font-size="9">Webhook Receivers</text>
+
+  <!-- Banks -->
+  <rect x="740" y="112" width="140" height="46" rx="6" fill="#1A2940" stroke="#F59E0B" stroke-width="1"/>
+  <text x="810" y="130" text-anchor="middle" fill="#FFFFFF" font-size="11" font-weight="600">Banks / MNOs</text>
+  <text x="810" y="148" text-anchor="middle" fill="#8899AA" font-size="9">API Key Auth</text>
+
+  <!-- Telcos -->
+  <rect x="910" y="112" width="140" height="46" rx="6" fill="#1A2940" stroke="#F59E0B" stroke-width="1"/>
+  <text x="980" y="130" text-anchor="middle" fill="#FFFFFF" font-size="11" font-weight="600">Telecom Ops</text>
+  <text x="980" y="148" text-anchor="middle" fill="#8899AA" font-size="9">Bulk SIM Feeds</text>
+
+  <!-- Connection arrows down from clients -->
+  <line x1="550" y1="172" x2="550" y2="192" stroke="#02C39A" stroke-width="2" stroke-dasharray="4,3"/>
+  <polygon points="545,190 550,198 555,190" fill="#02C39A"/>
+  <text x="565" y="188" fill="#02C39A" font-size="8" font-weight="600">HTTPS / TLS 1.3</text>
+
+  <!-- ═══ SECURITY GATEWAY LAYER ═══ -->
+  <rect x="30" y="200" width="1040" height="86" rx="10" fill="url(#cardDark)" stroke="#02C39A" stroke-width="1" stroke-opacity="0.4" filter="url(#shadow)"/>
+  <text x="55" y="220" fill="#02C39A" font-size="10" font-weight="600" letter-spacing="1.2">SECURITY GATEWAY — 11 MIDDLEWARE LAYERS</text>
+
+  <!-- Middleware boxes -->
+  <rect x="55" y="232" width="95" height="38" rx="4" fill="#0D3B2C" stroke="#02C39A" stroke-width="0.8"/>
+  <text x="102" y="248" text-anchor="middle" fill="#02C39A" font-size="8.5" font-weight="600">HTTPS</text>
+  <text x="102" y="260" text-anchor="middle" fill="#7ECABB" font-size="7.5">Enforcer</text>
+
+  <rect x="158" y="232" width="95" height="38" rx="4" fill="#0D3B2C" stroke="#02C39A" stroke-width="0.8"/>
+  <text x="205" y="248" text-anchor="middle" fill="#02C39A" font-size="8.5" font-weight="600">Rate Limit</text>
+  <text x="205" y="260" text-anchor="middle" fill="#7ECABB" font-size="7.5">slowapi</text>
+
+  <rect x="261" y="232" width="95" height="38" rx="4" fill="#0D3B2C" stroke="#02C39A" stroke-width="0.8"/>
+  <text x="308" y="248" text-anchor="middle" fill="#02C39A" font-size="8.5" font-weight="600">Size Limit</text>
+  <text x="308" y="260" text-anchor="middle" fill="#7ECABB" font-size="7.5">10MB max</text>
+
+  <rect x="364" y="232" width="95" height="38" rx="4" fill="#0D3B2C" stroke="#02C39A" stroke-width="0.8"/>
+  <text x="411" y="248" text-anchor="middle" fill="#02C39A" font-size="8.5" font-weight="600">Input Guard</text>
+  <text x="411" y="260" text-anchor="middle" fill="#7ECABB" font-size="7.5">SQLi/XSS/RCE</text>
+
+  <rect x="467" y="232" width="95" height="38" rx="4" fill="#0D3B2C" stroke="#02C39A" stroke-width="0.8"/>
+  <text x="514" y="248" text-anchor="middle" fill="#02C39A" font-size="8.5" font-weight="600">Custom Sec</text>
+  <text x="514" y="260" text-anchor="middle" fill="#7ECABB" font-size="7.5">TRACE/Headers</text>
+
+  <rect x="570" y="232" width="95" height="38" rx="4" fill="#0D3B2C" stroke="#02C39A" stroke-width="0.8"/>
+  <text x="617" y="248" text-anchor="middle" fill="#02C39A" font-size="8.5" font-weight="600">Request ID</text>
+  <text x="617" y="260" text-anchor="middle" fill="#7ECABB" font-size="7.5">Correlation</text>
+
+  <rect x="673" y="232" width="95" height="38" rx="4" fill="#0D3B2C" stroke="#02C39A" stroke-width="0.8"/>
+  <text x="720" y="248" text-anchor="middle" fill="#02C39A" font-size="8.5" font-weight="600">Sec Headers</text>
+  <text x="720" y="260" text-anchor="middle" fill="#7ECABB" font-size="7.5">CSP/HSTS/XFO</text>
+
+  <rect x="776" y="232" width="95" height="38" rx="4" fill="#0D3B2C" stroke="#02C39A" stroke-width="0.8"/>
+  <text x="823" y="248" text-anchor="middle" fill="#02C39A" font-size="8.5" font-weight="600">Metrics</text>
+  <text x="823" y="260" text-anchor="middle" fill="#7ECABB" font-size="7.5">Prometheus</text>
+
+  <rect x="879" y="232" width="95" height="38" rx="4" fill="#0D3B2C" stroke="#02C39A" stroke-width="0.8"/>
+  <text x="926" y="248" text-anchor="middle" fill="#02C39A" font-size="8.5" font-weight="600">Idempotency</text>
+  <text x="926" y="260" text-anchor="middle" fill="#7ECABB" font-size="7.5">Dedup</text>
+
+  <rect x="982" y="232" width="75" height="38" rx="4" fill="#0D3B2C" stroke="#02C39A" stroke-width="0.8"/>
+  <text x="1019" y="248" text-anchor="middle" fill="#02C39A" font-size="8.5" font-weight="600">Audit</text>
+  <text x="1019" y="260" text-anchor="middle" fill="#7ECABB" font-size="7.5">Logger</text>
+
+  <!-- Arrow down -->
+  <line x1="550" y1="286" x2="550" y2="306" stroke="#1C7293" stroke-width="2" stroke-dasharray="4,3"/>
+  <polygon points="545,304 550,312 555,304" fill="#1C7293"/>
+
+  <!-- ═══ APPLICATION LAYER ═══ -->
+  <rect x="30" y="314" width="1040" height="200" rx="10" fill="url(#cardDark)" stroke="#1C7293" stroke-width="1" stroke-opacity="0.3" filter="url(#shadow)"/>
+  <text x="55" y="334" fill="#1C7293" font-size="10" font-weight="600" letter-spacing="1.2">APPLICATION LAYER — FastAPI + Gunicorn</text>
+
+  <!-- Auth Module -->
+  <rect x="55" y="348" width="200" height="150" rx="8" fill="#112240" stroke="#1C7293" stroke-width="1"/>
+  <rect x="55" y="348" width="200" height="26" rx="8" fill="url(#primaryGrad)"/>
+  <text x="155" y="365" text-anchor="middle" fill="#FFF" font-size="11" font-weight="700">Authentication</text>
+  <text x="70" y="390" fill="#B0C4DE" font-size="9">OAuth2 Bearer + JWT</text>
+  <text x="70" y="405" fill="#B0C4DE" font-size="9">bcrypt Password Hashing</text>
+  <text x="70" y="420" fill="#B0C4DE" font-size="9">API Key Verification</text>
+  <text x="70" y="435" fill="#B0C4DE" font-size="9">Token Revocation (JTI)</text>
+  <text x="70" y="450" fill="#B0C4DE" font-size="9">Account Lockout (5 attempts)</text>
+  <text x="70" y="465" fill="#B0C4DE" font-size="9">Fine-Grained RBAC (19 perms)</text>
+  <text x="70" y="480" fill="#B0C4DE" font-size="9">Refresh Token Rotation</text>
+
+  <!-- Route Modules -->
+  <rect x="275" y="348" width="225" height="150" rx="8" fill="#112240" stroke="#1C7293" stroke-width="1"/>
+  <rect x="275" y="348" width="225" height="26" rx="8" fill="url(#primaryGrad)"/>
+  <text x="387" y="365" text-anchor="middle" fill="#FFF" font-size="11" font-weight="700">API Routes (v1)</text>
+  <text x="290" y="390" fill="#B0C4DE" font-size="9">/auth — login, refresh, logout</text>
+  <text x="290" y="405" fill="#B0C4DE" font-size="9">/recycled-sims — CRUD + bulk</text>
+  <text x="290" y="420" fill="#B0C4DE" font-size="9">/nin-linkages — verify + batch</text>
+  <text x="290" y="435" fill="#B0C4DE" font-size="9">/bvn-linkages — verify + batch</text>
+  <text x="290" y="450" fill="#B0C4DE" font-size="9">/delink-requests — workflow</text>
+  <text x="290" y="465" fill="#B0C4DE" font-size="9">/notifications — multi-channel</text>
+  <text x="290" y="480" fill="#B0C4DE" font-size="9">/webhooks, /audit-logs, /dashboard</text>
+
+  <!-- Services -->
+  <rect x="520" y="348" width="225" height="150" rx="8" fill="#112240" stroke="#1C7293" stroke-width="1"/>
+  <rect x="520" y="348" width="225" height="26" rx="8" fill="url(#primaryGrad)"/>
+  <text x="632" y="365" text-anchor="middle" fill="#FFF" font-size="11" font-weight="700">Business Services</text>
+  <text x="535" y="390" fill="#B0C4DE" font-size="9">RecycledSIMService</text>
+  <text x="535" y="405" fill="#B0C4DE" font-size="9">NINLinkageService / BVNLinkageService</text>
+  <text x="535" y="420" fill="#B0C4DE" font-size="9">DelinkService (workflow engine)</text>
+  <text x="535" y="435" fill="#B0C4DE" font-size="9">NotificationService (multi-channel)</text>
+  <text x="535" y="450" fill="#B0C4DE" font-size="9">AuditService (immutable trail)</text>
+  <text x="535" y="465" fill="#B0C4DE" font-size="9">SyncService (HMAC webhooks)</text>
+  <text x="535" y="480" fill="#B0C4DE" font-size="9">RetentionService / TokenRevocation</text>
+
+  <!-- Validators & Schemas -->
+  <rect x="765" y="348" width="290" height="150" rx="8" fill="#112240" stroke="#1C7293" stroke-width="1"/>
+  <rect x="765" y="348" width="290" height="26" rx="8" fill="url(#primaryGrad)"/>
+  <text x="910" y="365" text-anchor="middle" fill="#FFF" font-size="11" font-weight="700">Validation &amp; Data Protection</text>
+  <text x="780" y="390" fill="#B0C4DE" font-size="9">Pydantic Schemas (11 modules)</text>
+  <text x="780" y="405" fill="#B0C4DE" font-size="9">Nigerian Validators (NIN/BVN/MSISDN/IMSI)</text>
+  <text x="780" y="420" fill="#B0C4DE" font-size="9">Pagination Guards (max 100/page)</text>
+  <text x="780" y="435" fill="#B0C4DE" font-size="9">PII Encryption at Rest (HMAC-SHA256)</text>
+  <text x="780" y="450" fill="#B0C4DE" font-size="9">PII Masking in Logs</text>
+  <text x="780" y="465" fill="#B0C4DE" font-size="9">Structured JSON Logging</text>
+  <text x="780" y="480" fill="#B0C4DE" font-size="9">Custom Exception Hierarchy (10 types)</text>
+
+  <!-- Arrow down -->
+  <line x1="550" y1="514" x2="550" y2="534" stroke="#1C7293" stroke-width="2" stroke-dasharray="4,3"/>
+  <polygon points="545,532 550,540 555,532" fill="#1C7293"/>
+
+  <!-- ═══ DATA LAYER ═══ -->
+  <rect x="30" y="542" width="1040" height="120" rx="10" fill="url(#cardDark)" stroke="#065A82" stroke-width="1" stroke-opacity="0.4" filter="url(#shadow)"/>
+  <text x="55" y="562" fill="#065A82" font-size="10" font-weight="600" letter-spacing="1.2">DATA LAYER — SQLAlchemy 2.0 Async</text>
+
+  <!-- DB Models -->
+  <rect x="55" y="574" width="160" height="75" rx="6" fill="#0D1A2E" stroke="#065A82" stroke-width="0.8"/>
+  <text x="135" y="592" text-anchor="middle" fill="#FFFFFF" font-size="10" font-weight="600">Models (11)</text>
+  <text x="66" y="608" fill="#8899AA" font-size="8">User, APIKey, RecycledSIM</text>
+  <text x="66" y="620" fill="#8899AA" font-size="8">NINLinkage, BVNLinkage</text>
+  <text x="66" y="632" fill="#8899AA" font-size="8">DelinkRequest, Notification</text>
+  <text x="66" y="644" fill="#8899AA" font-size="8">AuditLog, Webhook, Idem, Revoked</text>
+
+  <!-- BaseRepository -->
+  <rect x="235" y="574" width="160" height="75" rx="6" fill="#0D1A2E" stroke="#065A82" stroke-width="0.8"/>
+  <text x="315" y="592" text-anchor="middle" fill="#FFFFFF" font-size="10" font-weight="600">BaseRepository</text>
+  <text x="246" y="608" fill="#8899AA" font-size="8">Generic[T] CRUD</text>
+  <text x="246" y="620" fill="#8899AA" font-size="8">create / get / update / delete</text>
+  <text x="246" y="632" fill="#8899AA" font-size="8">count / exists / filter</text>
+  <text x="246" y="644" fill="#8899AA" font-size="8">delete_by_filter</text>
+
+  <!-- Connection Pool -->
+  <rect x="415" y="574" width="160" height="75" rx="6" fill="#0D1A2E" stroke="#065A82" stroke-width="0.8"/>
+  <text x="495" y="592" text-anchor="middle" fill="#FFFFFF" font-size="10" font-weight="600">Connection Pool</text>
+  <text x="426" y="608" fill="#8899AA" font-size="8">pool_size: 20</text>
+  <text x="426" y="620" fill="#8899AA" font-size="8">max_overflow: 20</text>
+  <text x="426" y="632" fill="#8899AA" font-size="8">pool_pre_ping: true</text>
+  <text x="426" y="644" fill="#8899AA" font-size="8">statement_timeout: 30s</text>
+
+  <!-- PostgreSQL -->
+  <rect x="595" y="574" width="160" height="75" rx="6" fill="#0D1A2E" stroke="#F59E0B" stroke-width="1"/>
+  <text x="675" y="592" text-anchor="middle" fill="#F59E0B" font-size="10" font-weight="700">PostgreSQL 16</text>
+  <text x="606" y="608" fill="#8899AA" font-size="8">asyncpg driver</text>
+  <text x="606" y="620" fill="#8899AA" font-size="8">PII encrypted columns</text>
+  <text x="606" y="632" fill="#8899AA" font-size="8">Audit trail (365-day retention)</text>
+  <text x="606" y="644" fill="#8899AA" font-size="8">Timezone-aware timestamps</text>
+
+  <!-- Multi-DB -->
+  <rect x="775" y="574" width="280" height="75" rx="6" fill="#0D1A2E" stroke="#065A82" stroke-width="0.8"/>
+  <text x="915" y="592" text-anchor="middle" fill="#FFFFFF" font-size="10" font-weight="600">Multi-Database Support</text>
+  <text x="786" y="608" fill="#8899AA" font-size="8">PostgreSQL (asyncpg) — Primary</text>
+  <text x="786" y="620" fill="#8899AA" font-size="8">MySQL (aiomysql) | Oracle (oracledb)</text>
+  <text x="786" y="632" fill="#8899AA" font-size="8">InterSystems IRIS (pyodbc)</text>
+  <text x="786" y="644" fill="#8899AA" font-size="8">SQLite (aiosqlite) — Testing</text>
+
+  <!-- ═══ OBSERVABILITY LAYER ═══ -->
+  <rect x="30" y="680" width="1040" height="60" rx="10" fill="url(#cardDark)" stroke="#02C39A" stroke-width="1" stroke-opacity="0.25" filter="url(#shadow)"/>
+  <text x="55" y="700" fill="#02C39A" font-size="10" font-weight="600" letter-spacing="1.2">OBSERVABILITY &amp; CI/CD</text>
+
+  <rect x="55" y="712" width="140" height="20" rx="4" fill="#0D3B2C" stroke="#02C39A" stroke-width="0.6"/>
+  <text x="125" y="726" text-anchor="middle" fill="#02C39A" font-size="8.5" font-weight="600">/metrics (Prometheus)</text>
+
+  <rect x="210" y="712" width="140" height="20" rx="4" fill="#0D3B2C" stroke="#02C39A" stroke-width="0.6"/>
+  <text x="280" y="726" text-anchor="middle" fill="#02C39A" font-size="8.5" font-weight="600">/health (pool info)</text>
+
+  <rect x="365" y="712" width="140" height="20" rx="4" fill="#0D3B2C" stroke="#02C39A" stroke-width="0.6"/>
+  <text x="435" y="726" text-anchor="middle" fill="#02C39A" font-size="8.5" font-weight="600">JSON Structured Logs</text>
+
+  <rect x="520" y="712" width="140" height="20" rx="4" fill="#0D3B2C" stroke="#02C39A" stroke-width="0.6"/>
+  <text x="590" y="726" text-anchor="middle" fill="#02C39A" font-size="8.5" font-weight="600">PII Masking Filter</text>
+
+  <rect x="675" y="712" width="140" height="20" rx="4" fill="#0D3B2C" stroke="#02C39A" stroke-width="0.6"/>
+  <text x="745" y="726" text-anchor="middle" fill="#02C39A" font-size="8.5" font-weight="600">GitHub Actions CI</text>
+
+  <rect x="830" y="712" width="110" height="20" rx="4" fill="#0D3B2C" stroke="#02C39A" stroke-width="0.6"/>
+  <text x="885" y="726" text-anchor="middle" fill="#02C39A" font-size="8.5" font-weight="600">Semgrep SAST</text>
+
+  <rect x="955" y="712" width="100" height="20" rx="4" fill="#0D3B2C" stroke="#02C39A" stroke-width="0.6"/>
+  <text x="1005" y="726" text-anchor="middle" fill="#02C39A" font-size="8.5" font-weight="600">Playwright E2E</text>
+
+  <!-- ═══ FOOTER ═══ -->
+  <text x="550" y="770" text-anchor="middle" fill="#4A5568" font-size="9">Reconix v1.0 — All traffic encrypted in transit (TLS) and PII encrypted at rest (HMAC-SHA256)</text>
+  <text x="550" y="785" text-anchor="middle" fill="#4A5568" font-size="9">Docker Compose orchestration | Gunicorn + Uvicorn workers | Non-root containers</text>
+
+  <!-- Decorative shield watermark -->
+  <g transform="translate(1020, 760)" opacity="0.08">
+    <path d="M12 1L3 5v6c0 5.55 3.84 10.74 9 12 5.16-1.26 9-6.45 9-12V5L12 1z" fill="#02C39A"/>
+  </g>
+</svg>

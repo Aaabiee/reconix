@@ -1,0 +1,136 @@
+flowchart TD
+    Start([Daily 02:00 UTC])
+    Schedule["Reconciliation Job<br/>Triggered"]
+    Download["Connect to Operator<br/>SFTP Servers"]
+    Validate["Validate CSV<br/>Structure & Format"]
+    ParseCSV["Parse CSV & Load<br/>to temp_sim_inventory"]
+
+    GetCount["Get MSISDN<br/>Count"]
+    LoopStart{"For Each<br/>MSISDN"}
+
+    CurrentOwner["Query Current Owner<br/>from nin_linkages,<br/>bvn_linkages"]
+    OwnerExists{"Old Linkage<br/>Exists?"}
+
+    CheckNINC["Call NIMC API<br/>Verify NIN"]
+    NIMC_Result{"NIMC<br/>Result"}
+    NIMC_Success["NIN Verified<br/>(valid)"]
+    NIMC_Failed["NIN Failed<br/>(invalid/expired)"]
+
+    CheckNIBSS["Call NIBSS API<br/>Check BVN Linkage"]
+    NIBSS_Result{"BVN<br/>Found?"}
+    BVN_Found["BVN Linkage<br/>Confirmed"]
+    BVN_None["No BVN<br/>Found"]
+
+    CompareOwner["Compare Current<br/>vs Previous Owner<br/>(names, dates)"]
+    Recycled{"SIM<br/>Recycled?"}
+
+    CalcRisk["Calculate Risk<br/>Score Based On:<br/>- Days between deactivation<br/>- BVN found<br/>- NIMC verification status<br/>- Operator flags"]
+
+    Status_Active["Linkage Status:<br/>ACTIVE<br/>(high risk)"]
+    Status_Orphaned["Linkage Status:<br/>ORPHANED<br/>(unverified)"]
+    Status_Resolved["Linkage Status:<br/>RESOLVED<br/>(no current linkage)"]
+
+    Insert["Insert recycled_sims<br/>Record"]
+    InsertNIN["Insert nin_linkages<br/>Record"]
+    InsertBVN["Insert bvn_linkages<br/>Record"]
+
+    Publish["Publish Event:<br/>recycled_sim.detected<br/>to RabbitMQ"]
+
+    LogSuccess["Log Success<br/>in Job Stats"]
+
+    LoopEnd{"More<br/>MSISDN?"}
+
+    UpdateJob["Update job_execution_logs:<br/>- status = completed<br/>- records_processed<br/>- duration_seconds"]
+
+    SendReport["Generate & Send<br/>Daily Report<br/>to Operations Team"]
+
+    End(["Reconciliation<br/>Complete"])
+
+    ErrorDownload["SFTP Connection<br/>Failed"]
+    ErrorRetry["Retry 3x<br/>with Exponential<br/>Backoff"]
+    ErrorFall["Fallback to<br/>Previous Day<br/>Data"]
+
+    ErrorDB["Database<br/>Insert Error"]
+    ErrorRetryDB["Retry Insert<br/>up to 5x"]
+
+    ErrorAPI["API Timeout/<br/>Rate Limit"]
+    ErrorAPIQueue["Queue for Retry<br/>Next Cycle"]
+
+    Start --> Schedule
+    Schedule --> Download
+
+    Download -->|Success| Validate
+    Download -->|Failed| ErrorDownload
+    ErrorDownload --> ErrorRetry
+    ErrorRetry -->|Failed| ErrorFall
+    ErrorFall --> Validate
+
+    Validate -->|Invalid Format| End
+    Validate -->|Valid| ParseCSV
+
+    ParseCSV --> GetCount
+    GetCount --> LoopStart
+
+    LoopStart -->|No Old Linkage| Status_Resolved
+    LoopStart -->|Has Old Linkage| CurrentOwner
+
+    CurrentOwner --> CheckNINC
+
+    CheckNINC -->|Timeout| ErrorAPI
+    ErrorAPI --> ErrorAPIQueue
+    ErrorAPIQueue --> LoopEnd
+
+    CheckNINC -->|Success| NIMC_Result
+    NIMC_Result -->|Verified| NIMC_Success
+    NIMC_Result -->|Failed| NIMC_Failed
+
+    NIMC_Success --> CheckNIBSS
+    NIMC_Failed --> CheckNIBSS
+
+    CheckNIBSS -->|Timeout| ErrorAPI
+    CheckNIBSS -->|Success| NIBSS_Result
+
+    NIBSS_Result -->|BVN Found| BVN_Found
+    NIBSS_Result -->|Not Found| BVN_None
+
+    BVN_Found --> CompareOwner
+    BVN_None --> CompareOwner
+
+    CompareOwner --> Recycled
+    Recycled -->|Yes| Status_Active
+    Recycled -->|No| Status_Orphaned
+
+    Status_Active --> CalcRisk
+    Status_Orphaned --> CalcRisk
+    Status_Resolved --> CalcRisk
+
+    CalcRisk --> Insert
+
+    Insert -->|Error| ErrorDB
+    ErrorDB --> ErrorRetryDB
+    ErrorRetryDB -->|Success| InsertNIN
+    ErrorRetryDB -->|Failed| LogSuccess
+
+    Insert -->|Success| InsertNIN
+    InsertNIN --> InsertBVN
+    InsertBVN --> Publish
+    Publish --> LogSuccess
+
+    LogSuccess --> LoopEnd
+
+    LoopEnd -->|Yes| LoopStart
+    LoopEnd -->|No| UpdateJob
+
+    UpdateJob --> SendReport
+    SendReport --> End
+
+    style Start fill:#90EE90
+    style End fill:#FFB6C6
+    style Status_Active fill:#FF6B6B,color:#fff
+    style Status_Orphaned fill:#FFA500,color:#fff
+    style Status_Resolved fill:#90EE90
+    style CalcRisk fill:#87CEEB
+    style Publish fill:#DDA0DD
+    style ErrorDownload fill:#FFB6C6,color:#000
+    style ErrorDB fill:#FFB6C6,color:#000
+    style ErrorAPI fill:#FFB6C6,color:#000

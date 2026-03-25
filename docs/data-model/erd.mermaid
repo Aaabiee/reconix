@@ -1,0 +1,326 @@
+erDiagram
+    USERS ||--o{ API_KEYS : owns
+    USERS ||--o{ DELINK_REQUESTS : submits
+    USERS ||--o{ DELINK_APPROVALS : approves
+    USERS ||--o{ AUDIT_LOGS : performs
+    USERS }o--|| OPERATORS : "belongs to"
+    USERS }o--|| BANKS : "belongs to"
+
+    OPERATORS ||--o{ RECYCLED_SIMS : detects
+    OPERATORS ||--o{ DELINK_REQUESTS : processes
+
+    BANKS ||--o{ BVN_LINKAGES : manages
+    BANKS ||--o{ DELINK_REQUESTS : approves
+    BANKS ||--o{ DELINK_APPROVALS : approves
+
+    RECYCLED_SIMS ||--o{ DELINK_REQUESTS : "initiates"
+    RECYCLED_SIMS }o--|| OPERATORS : "from operator"
+
+    NIN_LINKAGES ||--o{ DELINK_REQUESTS : "deletes"
+    NIN_LINKAGES }o--|| RECYCLED_SIMS : "creates"
+
+    BVN_LINKAGES ||--o{ DELINK_REQUESTS : "deletes"
+    BVN_LINKAGES }o--|| RECYCLED_SIMS : "creates"
+    BVN_LINKAGES }o--|| BANKS : "at bank"
+
+    DELINK_REQUESTS ||--o{ DELINK_APPROVALS : "requires"
+    DELINK_REQUESTS ||--o{ NOTIFICATIONS : "triggers"
+
+    RECYCLED_SIMS ||--o{ NOTIFICATIONS : "alerts"
+
+    NOTIFICATION_TEMPLATES ||--o{ NOTIFICATIONS : "uses"
+
+    API_KEYS }o--|| USERS : "authenticates"
+
+    AUDIT_LOGS }o--|| USERS : "by user"
+    AUDIT_LOGS }o--|| RECYCLED_SIMS : "logs changes"
+    AUDIT_LOGS }o--|| DELINK_REQUESTS : "logs changes"
+    AUDIT_LOGS }o--|| USERS : "logs changes"
+
+    SYSTEM_CONFIG ||--|| SYSTEM_CONFIG : "stores"
+
+    API_REQUEST_LOGS }o--|| USERS : "from user"
+    API_REQUEST_LOGS }o--|| API_KEYS : "using key"
+
+    JOB_EXECUTION_LOGS ||--|| JOB_EXECUTION_LOGS : "tracks"
+
+    %% Entity definitions with key attributes
+
+    USERS {
+        int id PK
+        string username UK
+        string email UK
+        string password_hash
+        string full_name
+        string role
+        int operator_id FK
+        int bank_id FK
+        boolean is_active
+        boolean is_verified
+        timestamp last_login_at
+        timestamp created_at
+        timestamp updated_at
+    }
+
+    OPERATORS {
+        int id PK
+        string code UK
+        string name UK
+        string contact_email
+        string contact_phone
+        string api_endpoint
+        string sftp_host
+        boolean is_active
+        timestamp created_at
+        timestamp updated_at
+    }
+
+    BANKS {
+        int id PK
+        string code UK
+        string name UK
+        string swift_code
+        string contact_email
+        string contact_phone
+        string api_endpoint
+        boolean is_active
+        timestamp created_at
+        timestamp updated_at
+    }
+
+    API_KEYS {
+        int id PK
+        int user_id FK
+        string key_hash UK
+        string key_prefix
+        string name
+        json permissions
+        int rate_limit_per_minute
+        int rate_limit_per_day
+        timestamp last_used_at
+        boolean is_active
+        timestamp expires_at
+        timestamp created_at
+        timestamp revoked_at
+    }
+
+    RECYCLED_SIMS {
+        bigint id PK
+        string sim_serial_number UK
+        string msisdn
+        string imsi
+        int operator_id FK
+        string previous_owner_nin
+        string previous_owner_name
+        string previous_owner_bvn
+        date activation_date
+        date deactivation_date
+        date current_activation_date
+        string current_subscriber_name
+        string linkage_status
+        string cleanup_status
+        bigint delink_request_id FK
+        string detection_method
+        decimal risk_score
+        text notes
+        timestamp created_at
+        timestamp updated_at
+    }
+
+    NIN_LINKAGES {
+        bigint id PK
+        string msisdn
+        string nin
+        string owner_name
+        string owner_phone
+        date linkage_date
+        string verification_status
+        string verification_source
+        boolean verified_by_nimc
+        timestamp last_verified_at
+        boolean is_current
+        string linkage_source
+        bigint delink_request_id FK
+        timestamp created_at
+        timestamp updated_at
+        timestamp deleted_at
+    }
+
+    BVN_LINKAGES {
+        bigint id PK
+        string msisdn
+        string bvn
+        string account_holder_name
+        string account_number
+        int bank_id FK
+        string account_type
+        date linkage_date
+        string verification_status
+        string verification_source
+        boolean verified_by_nibss
+        timestamp last_verified_at
+        boolean is_current
+        string linkage_source
+        bigint delink_request_id FK
+        timestamp created_at
+        timestamp updated_at
+        timestamp deleted_at
+    }
+
+    DELINK_REQUESTS {
+        bigint id PK
+        uuid request_uuid UK
+        bigint recycled_sim_id FK
+        string msisdn
+        string nin
+        string bvn
+        int operator_id FK
+        int requested_by_user_id FK
+        timestamp requested_at
+        string workflow_status
+        string operator_approval_status
+        string bank_approval_status
+        int bank_id FK
+        int bank_approved_by_user_id FK
+        timestamp bank_approved_at
+        string nimc_notification_status
+        string nimc_reference_id
+        timestamp nimc_notified_at
+        string execution_status
+        timestamp execution_timestamp
+        string executed_by_system_component
+        timestamp completion_timestamp
+        boolean is_successful
+        text error_message
+        json error_details
+        int retry_count
+        int max_retries
+        timestamp next_retry_at
+        string rollback_status
+        text rollback_reason
+        string delink_method
+        timestamp created_at
+        timestamp updated_at
+    }
+
+    DELINK_APPROVALS {
+        int id PK
+        bigint delink_request_id FK
+        string approval_type
+        int approver_user_id FK
+        timestamp approved_at
+        string approval_status
+        text approval_notes
+        inet approval_ip_address
+        string approval_method
+        timestamp created_at
+        timestamp updated_at
+    }
+
+    NOTIFICATION_TEMPLATES {
+        int id PK
+        string template_key UK
+        string template_name
+        string channel
+        string subject
+        text message_body
+        json variables
+        boolean is_active
+        timestamp created_at
+        timestamp updated_at
+    }
+
+    NOTIFICATIONS {
+        bigint id PK
+        uuid notification_uuid UK
+        int template_id FK
+        bigint delink_request_id FK
+        bigint recycled_sim_id FK
+        string recipient_type
+        string recipient_identifier
+        string recipient_name
+        string recipient_msisdn
+        string recipient_email
+        string recipient_nin
+        string channel
+        string rendered_subject
+        text rendered_message
+        string delivery_status
+        timestamp delivery_timestamp
+        timestamp read_timestamp
+        int retry_count
+        int max_retries
+        timestamp next_retry_at
+        text error_message
+        json provider_response
+        timestamp created_at
+        timestamp updated_at
+    }
+
+    AUDIT_LOGS {
+        bigint id PK
+        uuid audit_uuid UK
+        string event_type
+        int actor_user_id FK
+        inet actor_ip_address
+        text actor_user_agent
+        string resource_type
+        string resource_id
+        string action
+        string action_result
+        json old_values
+        json new_values
+        string changes_hash
+        json details
+        boolean is_security_relevant
+        string severity_level
+        timestamp created_at
+    }
+
+    SYSTEM_CONFIG {
+        int id PK
+        string config_key UK
+        text config_value
+        string value_type
+        text description
+        boolean is_secret
+        boolean is_mutable
+        timestamp created_at
+        timestamp updated_at
+    }
+
+    API_REQUEST_LOGS {
+        bigint id PK
+        uuid request_uuid
+        int user_id FK
+        int api_key_id FK
+        string http_method
+        string endpoint_path
+        json query_parameters
+        string request_body_hash
+        smallint response_status_code
+        int response_time_ms
+        text error_message
+        inet ip_address
+        text user_agent
+        timestamp created_at
+    }
+
+    JOB_EXECUTION_LOGS {
+        bigint id PK
+        string job_name
+        uuid job_uuid
+        string job_type
+        string status
+        timestamp started_at
+        timestamp completed_at
+        decimal duration_seconds
+        int records_processed
+        int records_succeeded
+        int records_failed
+        text error_message
+        json error_details
+        int retry_count
+        timestamp next_retry_at
+        timestamp created_at
+    }

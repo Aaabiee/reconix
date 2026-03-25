@@ -1,0 +1,224 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1100 700" font-family="'Segoe UI', system-ui, -apple-system, sans-serif">
+  <defs>
+    <linearGradient id="sbg" x1="0" y1="0" x2="1100" y2="700" gradientUnits="userSpaceOnUse">
+      <stop offset="0%" stop-color="#0A1628"/><stop offset="100%" stop-color="#0F2035"/>
+    </linearGradient>
+    <linearGradient id="red" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0%" stop-color="#EF4444"/><stop offset="100%" stop-color="#DC2626"/>
+    </linearGradient>
+    <linearGradient id="grn" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0%" stop-color="#02C39A"/><stop offset="100%" stop-color="#00A17B"/>
+    </linearGradient>
+    <linearGradient id="blu" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0%" stop-color="#1C7293"/><stop offset="100%" stop-color="#065A82"/>
+    </linearGradient>
+    <filter id="ds" x="-3%" y="-3%" width="106%" height="110%">
+      <feDropShadow dx="0" dy="2" stdDeviation="4" flood-color="#000" flood-opacity="0.3"/>
+    </filter>
+  </defs>
+
+  <rect width="1100" height="700" fill="url(#sbg)"/>
+
+  <!-- Title -->
+  <text x="550" y="38" text-anchor="middle" fill="#FFF" font-size="20" font-weight="700">Security Architecture — OWASP Top 10 Compliance</text>
+  <text x="550" y="56" text-anchor="middle" fill="#02C39A" font-size="11" letter-spacing="1">DEFENSE-IN-DEPTH ACROSS ALL LAYERS</text>
+
+  <!-- ═══ LEFT COLUMN: OWASP Matrix ═══ -->
+  <rect x="30" y="74" width="520" height="600" rx="10" fill="#0E1F35" stroke="#1C7293" stroke-width="0.8" filter="url(#ds)"/>
+  <rect x="30" y="74" width="520" height="30" rx="10" fill="url(#blu)"/>
+  <text x="290" y="94" text-anchor="middle" fill="#FFF" font-size="12" font-weight="700">OWASP Top 10 Compliance Matrix</text>
+
+  <!-- Table header -->
+  <text x="50" y="126" fill="#8899AA" font-size="9" font-weight="600">CATEGORY</text>
+  <text x="300" y="126" fill="#8899AA" font-size="9" font-weight="600">STATUS</text>
+  <text x="370" y="126" fill="#8899AA" font-size="9" font-weight="600">CONTROLS</text>
+  <line x1="40" y1="132" x2="540" y2="132" stroke="#1C7293" stroke-width="0.5" stroke-opacity="0.3"/>
+
+  <!-- A01 -->
+  <text x="50" y="150" fill="#FFFFFF" font-size="9.5" font-weight="600">A01: Broken Access Control</text>
+  <rect x="300" y="139" width="55" height="16" rx="8" fill="#02C39A"/>
+  <text x="327" y="151" text-anchor="middle" fill="#0A1628" font-size="8" font-weight="700">HARDENED</text>
+  <text x="370" y="150" fill="#B0C4DE" font-size="8.5">RBAC + 19 permissions, IDOR protection, user-scoped keys</text>
+
+  <!-- A02 -->
+  <text x="50" y="175" fill="#FFFFFF" font-size="9.5" font-weight="600">A02: Cryptographic Failures</text>
+  <rect x="300" y="164" width="55" height="16" rx="8" fill="#02C39A"/>
+  <text x="327" y="176" text-anchor="middle" fill="#0A1628" font-size="8" font-weight="700">HARDENED</text>
+  <text x="370" y="175" fill="#B0C4DE" font-size="8.5">bcrypt, HMAC-SHA256, PII encryption at rest</text>
+
+  <!-- A03 -->
+  <text x="50" y="200" fill="#FFFFFF" font-size="9.5" font-weight="600">A03: Injection</text>
+  <rect x="300" y="189" width="55" height="16" rx="8" fill="#02C39A"/>
+  <text x="327" y="201" text-anchor="middle" fill="#0A1628" font-size="8" font-weight="700">HARDENED</text>
+  <text x="370" y="200" fill="#B0C4DE" font-size="8.5">ORM parameterized, input guard blocks SQLi/XSS/RCE</text>
+
+  <!-- A04 -->
+  <text x="50" y="225" fill="#FFFFFF" font-size="9.5" font-weight="600">A04: Insecure Design</text>
+  <rect x="300" y="214" width="55" height="16" rx="8" fill="#02C39A"/>
+  <text x="327" y="226" text-anchor="middle" fill="#0A1628" font-size="8" font-weight="700">HARDENED</text>
+  <text x="370" y="225" fill="#B0C4DE" font-size="8.5">Defense-in-depth, rate limiting, account lockout</text>
+
+  <!-- A05 -->
+  <text x="50" y="250" fill="#FFFFFF" font-size="9.5" font-weight="600">A05: Security Misconfiguration</text>
+  <rect x="300" y="239" width="55" height="16" rx="8" fill="#02C39A"/>
+  <text x="327" y="251" text-anchor="middle" fill="#0A1628" font-size="8" font-weight="700">HARDENED</text>
+  <text x="370" y="250" fill="#B0C4DE" font-size="8.5">Prod validation, no defaults, docs hidden in prod</text>
+
+  <!-- A06 -->
+  <text x="50" y="275" fill="#FFFFFF" font-size="9.5" font-weight="600">A06: Vulnerable Components</text>
+  <rect x="300" y="264" width="55" height="16" rx="8" fill="#02C39A"/>
+  <text x="327" y="276" text-anchor="middle" fill="#0A1628" font-size="8" font-weight="700">HARDENED</text>
+  <text x="370" y="275" fill="#B0C4DE" font-size="8.5">pip-audit, npm audit, Semgrep SAST in CI</text>
+
+  <!-- A07 -->
+  <text x="50" y="300" fill="#FFFFFF" font-size="9.5" font-weight="600">A07: Auth Failures</text>
+  <rect x="300" y="289" width="55" height="16" rx="8" fill="#02C39A"/>
+  <text x="327" y="301" text-anchor="middle" fill="#0A1628" font-size="8" font-weight="700">HARDENED</text>
+  <text x="370" y="300" fill="#B0C4DE" font-size="8.5">Token rotation, JTI revocation, timing-safe</text>
+
+  <!-- A08 -->
+  <text x="50" y="325" fill="#FFFFFF" font-size="9.5" font-weight="600">A08: Data Integrity Failures</text>
+  <rect x="300" y="314" width="55" height="16" rx="8" fill="#02C39A"/>
+  <text x="327" y="326" text-anchor="middle" fill="#0A1628" font-size="8" font-weight="700">HARDENED</text>
+  <text x="370" y="325" fill="#B0C4DE" font-size="8.5">Idempotency keys, schema enforcement, transactions</text>
+
+  <!-- A09 -->
+  <text x="50" y="350" fill="#FFFFFF" font-size="9.5" font-weight="600">A09: Logging &amp; Monitoring</text>
+  <rect x="300" y="339" width="55" height="16" rx="8" fill="#02C39A"/>
+  <text x="327" y="351" text-anchor="middle" fill="#0A1628" font-size="8" font-weight="700">HARDENED</text>
+  <text x="370" y="350" fill="#B0C4DE" font-size="8.5">JSON logs, PII masking, Prometheus, audit trail</text>
+
+  <!-- A10 -->
+  <text x="50" y="375" fill="#FFFFFF" font-size="9.5" font-weight="600">A10: SSRF</text>
+  <rect x="300" y="364" width="55" height="16" rx="8" fill="#02C39A"/>
+  <text x="327" y="376" text-anchor="middle" fill="#0A1628" font-size="8" font-weight="700">HARDENED</text>
+  <text x="370" y="375" fill="#B0C4DE" font-size="8.5">Webhook URL validation, private IP blocking</text>
+
+  <!-- Extra protections -->
+  <line x1="40" y1="395" x2="540" y2="395" stroke="#1C7293" stroke-width="0.5" stroke-opacity="0.3"/>
+  <text x="50" y="416" fill="#02C39A" font-size="10" font-weight="600">Additional Protections</text>
+
+  <text x="50" y="438" fill="#B0C4DE" font-size="9">TRACE/TRACK method blocking</text>
+  <text x="50" y="455" fill="#B0C4DE" font-size="9">Content-Type enforcement on mutations</text>
+  <text x="50" y="472" fill="#B0C4DE" font-size="9">URL length + header size enforcement</text>
+  <text x="50" y="489" fill="#B0C4DE" font-size="9">Host header validation</text>
+  <text x="50" y="506" fill="#B0C4DE" font-size="9">Cross-Origin-Opener/Resource/Embedder policies</text>
+  <text x="50" y="523" fill="#B0C4DE" font-size="9">Request deduplication (5s window, SHA-256)</text>
+  <text x="50" y="540" fill="#B0C4DE" font-size="9">No silent encryption fallback (fail-closed)</text>
+  <text x="50" y="557" fill="#B0C4DE" font-size="9">Safe type casting (no 500 on malformed input)</text>
+  <text x="50" y="574" fill="#B0C4DE" font-size="9">SameSite=Strict cookies, no localStorage tokens</text>
+  <text x="50" y="591" fill="#B0C4DE" font-size="9">Constant-time dummy verify (user enumeration prevention)</text>
+
+  <!-- Test coverage -->
+  <line x1="40" y1="608" x2="540" y2="608" stroke="#1C7293" stroke-width="0.5" stroke-opacity="0.3"/>
+  <text x="50" y="630" fill="#F59E0B" font-size="10" font-weight="600">Security Test Coverage</text>
+  <text x="50" y="652" fill="#B0C4DE" font-size="9">Integration: SQLi, XSS, RCE, path traversal, IDOR, RBAC enforcement</text>
+  <text x="50" y="665" fill="#B0C4DE" font-size="9">E2E: Playwright security headers, auth flow, protected routes</text>
+
+  <!-- ═══ RIGHT COLUMN: Request Flow ═══ -->
+  <rect x="570" y="74" width="500" height="600" rx="10" fill="#0E1F35" stroke="#1C7293" stroke-width="0.8" filter="url(#ds)"/>
+  <rect x="570" y="74" width="500" height="30" rx="10" fill="url(#blu)"/>
+  <text x="820" y="94" text-anchor="middle" fill="#FFF" font-size="12" font-weight="700">Request Security Pipeline</text>
+
+  <!-- Flow steps -->
+  <g transform="translate(600, 120)">
+    <!-- Step 1 -->
+    <rect x="0" y="0" width="440" height="34" rx="6" fill="#1A2940" stroke="#EF4444" stroke-width="1"/>
+    <circle cx="20" cy="17" r="10" fill="url(#red)"/>
+    <text x="20" y="21" text-anchor="middle" fill="#FFF" font-size="9" font-weight="700">1</text>
+    <text x="42" y="14" fill="#FFFFFF" font-size="10" font-weight="600">HTTPS Enforcer</text>
+    <text x="42" y="28" fill="#8899AA" font-size="8">Redirect HTTP to HTTPS via X-Forwarded-Proto</text>
+
+    <!-- Step 2 -->
+    <rect x="0" y="44" width="440" height="34" rx="6" fill="#1A2940" stroke="#EF4444" stroke-width="1"/>
+    <circle cx="20" cy="61" r="10" fill="url(#red)"/>
+    <text x="20" y="65" text-anchor="middle" fill="#FFF" font-size="9" font-weight="700">2</text>
+    <text x="42" y="58" fill="#FFFFFF" font-size="10" font-weight="600">Request Size Limiter</text>
+    <text x="42" y="72" fill="#8899AA" font-size="8">Reject bodies &gt; 10MB, safe Content-Length parsing</text>
+
+    <!-- Step 3 -->
+    <rect x="0" y="88" width="440" height="34" rx="6" fill="#1A2940" stroke="#EF4444" stroke-width="1"/>
+    <circle cx="20" cy="105" r="10" fill="url(#red)"/>
+    <text x="20" y="109" text-anchor="middle" fill="#FFF" font-size="9" font-weight="700">3</text>
+    <text x="42" y="102" fill="#FFFFFF" font-size="10" font-weight="600">Input Sanitization Guard</text>
+    <text x="42" y="116" fill="#8899AA" font-size="8">Block DROP/UNION/SELECT, &lt;script&gt;, ;rm, ../, backticks</text>
+
+    <!-- Step 4 -->
+    <rect x="0" y="132" width="440" height="34" rx="6" fill="#1A2940" stroke="#F59E0B" stroke-width="1"/>
+    <circle cx="20" cy="149" r="10" fill="url(#warnGrad)"/>
+    <text x="20" y="153" text-anchor="middle" fill="#FFF" font-size="9" font-weight="700">4</text>
+    <text x="42" y="146" fill="#FFFFFF" font-size="10" font-weight="600">Request ID Tracking</text>
+    <text x="42" y="160" fill="#8899AA" font-size="8">Assign/propagate X-Request-ID (UUID v4)</text>
+
+    <!-- Step 5 -->
+    <rect x="0" y="176" width="440" height="34" rx="6" fill="#1A2940" stroke="#02C39A" stroke-width="1"/>
+    <circle cx="20" cy="193" r="10" fill="url(#grn)"/>
+    <text x="20" y="197" text-anchor="middle" fill="#FFF" font-size="9" font-weight="700">5</text>
+    <text x="42" y="190" fill="#FFFFFF" font-size="10" font-weight="600">Security Headers</text>
+    <text x="42" y="204" fill="#8899AA" font-size="8">CSP, HSTS, X-Frame-Options, Referrer-Policy, Permissions</text>
+
+    <!-- Step 6 -->
+    <rect x="0" y="220" width="440" height="34" rx="6" fill="#1A2940" stroke="#02C39A" stroke-width="1"/>
+    <circle cx="20" cy="237" r="10" fill="url(#grn)"/>
+    <text x="20" y="241" text-anchor="middle" fill="#FFF" font-size="9" font-weight="700">6</text>
+    <text x="42" y="234" fill="#FFFFFF" font-size="10" font-weight="600">Custom Security Middleware</text>
+    <text x="42" y="248" fill="#8899AA" font-size="8">TRACE block, URL/header limits, Content-Type, COOP/CORP</text>
+
+    <!-- Step 7 -->
+    <rect x="0" y="264" width="440" height="34" rx="6" fill="#1A2940" stroke="#02C39A" stroke-width="1"/>
+    <circle cx="20" cy="281" r="10" fill="url(#grn)"/>
+    <text x="20" y="285" text-anchor="middle" fill="#FFF" font-size="9" font-weight="700">7</text>
+    <text x="42" y="278" fill="#FFFFFF" font-size="10" font-weight="600">Metrics Collector</text>
+    <text x="42" y="292" fill="#8899AA" font-size="8">Prometheus counters, latency, active requests</text>
+
+    <!-- Step 8 -->
+    <rect x="0" y="308" width="440" height="34" rx="6" fill="#1A2940" stroke="#1C7293" stroke-width="1"/>
+    <circle cx="20" cy="325" r="10" fill="url(#blu)"/>
+    <text x="20" y="329" text-anchor="middle" fill="#FFF" font-size="9" font-weight="700">8</text>
+    <text x="42" y="322" fill="#FFFFFF" font-size="10" font-weight="600">Idempotency + Deduplication</text>
+    <text x="42" y="336" fill="#8899AA" font-size="8">User-scoped replay, SHA-256 fingerprint dedup (5s window)</text>
+
+    <!-- Step 9 -->
+    <rect x="0" y="352" width="440" height="34" rx="6" fill="#1A2940" stroke="#1C7293" stroke-width="1"/>
+    <circle cx="20" cy="369" r="10" fill="url(#blu)"/>
+    <text x="20" y="373" text-anchor="middle" fill="#FFF" font-size="9" font-weight="700">9</text>
+    <text x="42" y="366" fill="#FFFFFF" font-size="10" font-weight="600">Audit Logger</text>
+    <text x="42" y="380" fill="#8899AA" font-size="8">JSON structured logging with PII auto-masking</text>
+
+    <!-- Step 10 -->
+    <rect x="0" y="396" width="440" height="34" rx="6" fill="#1A2940" stroke="#1C7293" stroke-width="1"/>
+    <circle cx="20" cy="413" r="10" fill="url(#blu)"/>
+    <text x="20" y="417" text-anchor="middle" fill="#0A1628" font-size="9" font-weight="700">10</text>
+    <text x="42" y="410" fill="#FFFFFF" font-size="10" font-weight="600">OAuth2 + RBAC Authentication</text>
+    <text x="42" y="424" fill="#8899AA" font-size="8">Bearer token, JWT verify, role/permission check</text>
+
+    <!-- Step 11 -->
+    <rect x="0" y="440" width="440" height="34" rx="6" fill="#1A2940" stroke="#02C39A" stroke-width="1.5"/>
+    <circle cx="20" cy="457" r="10" fill="url(#grn)"/>
+    <text x="20" y="461" text-anchor="middle" fill="#0A1628" font-size="9" font-weight="700">11</text>
+    <text x="42" y="454" fill="#02C39A" font-size="10" font-weight="700">Route Handler (Business Logic)</text>
+    <text x="42" y="468" fill="#8899AA" font-size="8">Validated, authenticated, authorized, deduplicated, audited</text>
+
+    <!-- Flow arrows -->
+    <g stroke="#4A5568" stroke-width="1" fill="#4A5568">
+      <line x1="220" y1="34" x2="220" y2="44"/><polygon points="217,42 220,47 223,42"/>
+      <line x1="220" y1="78" x2="220" y2="88"/><polygon points="217,86 220,91 223,86"/>
+      <line x1="220" y1="122" x2="220" y2="132"/><polygon points="217,130 220,135 223,130"/>
+      <line x1="220" y1="166" x2="220" y2="176"/><polygon points="217,174 220,179 223,174"/>
+      <line x1="220" y1="210" x2="220" y2="220"/><polygon points="217,218 220,223 223,218"/>
+      <line x1="220" y1="254" x2="220" y2="264"/><polygon points="217,262 220,267 223,262"/>
+      <line x1="220" y1="298" x2="220" y2="308"/><polygon points="217,306 220,311 223,306"/>
+      <line x1="220" y1="342" x2="220" y2="352"/><polygon points="217,350 220,355 223,350"/>
+      <line x1="220" y1="386" x2="220" y2="396"/><polygon points="217,394 220,399 223,394"/>
+      <line x1="220" y1="430" x2="220" y2="440"/><polygon points="217,438 220,443 223,438"/>
+    </g>
+  </g>
+
+  <!-- Legend -->
+  <g transform="translate(600, 610)">
+    <circle cx="10" cy="8" r="6" fill="url(#red)"/><text x="24" y="12" fill="#8899AA" font-size="8.5">Blocks malicious requests</text>
+    <circle cx="160" cy="8" r="6" fill="url(#warnGrad)"/><text x="174" y="12" fill="#8899AA" font-size="8.5">Enriches request context</text>
+    <circle cx="320" cy="8" r="6" fill="url(#grn)"/><text x="334" y="12" fill="#8899AA" font-size="8.5">Adds security headers/metrics</text>
+    <circle cx="10" cy="28" r="6" fill="url(#blu)"/><text x="24" y="32" fill="#8899AA" font-size="8.5">Authenticates and authorizes</text>
+  </g>
+</svg>

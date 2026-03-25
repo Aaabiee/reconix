@@ -1,0 +1,360 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1400 1050" font-family="'Segoe UI', system-ui, -apple-system, sans-serif">
+  <defs>
+    <linearGradient id="bg" x1="0" y1="0" x2="1400" y2="1050" gradientUnits="userSpaceOnUse">
+      <stop offset="0%" stop-color="#0A1628"/><stop offset="100%" stop-color="#0F2035"/>
+    </linearGradient>
+    <linearGradient id="hdr" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0%" stop-color="#1C7293"/><stop offset="100%" stop-color="#065A82"/>
+    </linearGradient>
+    <linearGradient id="hdrG" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0%" stop-color="#02C39A"/><stop offset="100%" stop-color="#00A17B"/>
+    </linearGradient>
+    <linearGradient id="hdrA" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0%" stop-color="#F59E0B"/><stop offset="100%" stop-color="#D97706"/>
+    </linearGradient>
+    <linearGradient id="hdrR" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0%" stop-color="#EF4444"/><stop offset="100%" stop-color="#DC2626"/>
+    </linearGradient>
+    <filter id="ds" x="-3%" y="-3%" width="106%" height="110%">
+      <feDropShadow dx="0" dy="3" stdDeviation="5" flood-color="#000" flood-opacity="0.4"/>
+    </filter>
+    <marker id="fk" markerWidth="8" markerHeight="6" refX="8" refY="3" orient="auto">
+      <polygon points="0,0 8,3 0,6" fill="#02C39A"/>
+    </marker>
+    <marker id="fkB" markerWidth="8" markerHeight="6" refX="8" refY="3" orient="auto">
+      <polygon points="0,0 8,3 0,6" fill="#1C7293"/>
+    </marker>
+    <marker id="fkW" markerWidth="8" markerHeight="6" refX="8" refY="3" orient="auto">
+      <polygon points="0,0 8,3 0,6" fill="#F59E0B"/>
+    </marker>
+  </defs>
+
+  <rect width="1400" height="1050" fill="url(#bg)"/>
+
+  <!-- Title -->
+  <text x="700" y="38" text-anchor="middle" fill="#FFF" font-size="22" font-weight="700" letter-spacing="0.5">Reconix Database — Entity Relationship Diagram</text>
+  <text x="700" y="58" text-anchor="middle" fill="#02C39A" font-size="11" letter-spacing="1.5">11 TABLES · POSTGRESQL 16 · ASYNC SQLALCHEMY 2.0 · READ REPLICA ROUTING</text>
+
+  <!-- Legend -->
+  <rect x="30" y="70" width="420" height="28" rx="6" fill="#0E1F35" stroke="#1C7293" stroke-width="0.6"/>
+  <rect x="40" y="77" width="10" height="10" rx="2" fill="url(#hdr)"/><text x="56" y="86" fill="#8899AA" font-size="9">Core Domain</text>
+  <rect x="140" y="77" width="10" height="10" rx="2" fill="url(#hdrG)"/><text x="156" y="86" fill="#8899AA" font-size="9">Linkage</text>
+  <rect x="220" y="77" width="10" height="10" rx="2" fill="url(#hdrA)"/><text x="236" y="86" fill="#8899AA" font-size="9">Compliance</text>
+  <rect x="320" y="77" width="10" height="10" rx="2" fill="url(#hdrR)"/><text x="336" y="86" fill="#8899AA" font-size="9">Security</text>
+  <text x="410" y="86" fill="#02C39A" font-size="9">→ FK</text>
+
+  <!-- ════════════════════════════════════════════════ -->
+  <!-- TABLE: users (top-left) -->
+  <!-- ════════════════════════════════════════════════ -->
+  <g transform="translate(30, 110)" filter="url(#ds)">
+    <rect width="250" height="260" rx="8" fill="#0E1F35" stroke="#1C7293" stroke-width="1"/>
+    <rect width="250" height="28" rx="8" fill="url(#hdr)"/>
+    <rect y="20" width="250" height="8" fill="url(#hdr)"/>
+    <text x="125" y="19" text-anchor="middle" fill="#FFF" font-size="12" font-weight="700">users</text>
+    <text x="12" y="50" fill="#02C39A" font-size="9" font-weight="600">PK</text><text x="40" y="50" fill="#FFF" font-size="9.5">id</text><text x="160" y="50" fill="#556677" font-size="8.5">Integer</text>
+    <text x="40" y="68" fill="#FFF" font-size="9.5">email</text><text x="160" y="68" fill="#556677" font-size="8.5">String UNIQUE</text>
+    <text x="40" y="86" fill="#FFF" font-size="9.5">hashed_password</text><text x="160" y="86" fill="#556677" font-size="8.5">String</text>
+    <text x="40" y="104" fill="#FFF" font-size="9.5">full_name</text><text x="160" y="104" fill="#556677" font-size="8.5">String</text>
+    <text x="40" y="122" fill="#FFF" font-size="9.5">role</text><text x="160" y="122" fill="#F59E0B" font-size="8.5">UserRole ENUM</text>
+    <text x="40" y="140" fill="#FFF" font-size="9.5">organization</text><text x="160" y="140" fill="#556677" font-size="8.5">String?</text>
+    <text x="40" y="158" fill="#FFF" font-size="9.5">is_active</text><text x="160" y="158" fill="#556677" font-size="8.5">Boolean</text>
+    <text x="40" y="176" fill="#FFF" font-size="9.5">failed_login_attempts</text><text x="196" y="176" fill="#556677" font-size="8.5">Int</text>
+    <text x="40" y="194" fill="#FFF" font-size="9.5">locked_until</text><text x="160" y="194" fill="#556677" font-size="8.5">DateTime?</text>
+    <text x="40" y="212" fill="#FFF" font-size="9.5">last_login</text><text x="160" y="212" fill="#556677" font-size="8.5">DateTime?</text>
+    <line x1="10" y1="222" x2="240" y2="222" stroke="#1C7293" stroke-width="0.4" stroke-opacity="0.3"/>
+    <text x="40" y="238" fill="#8899AA" font-size="8.5">created_at, updated_at</text>
+    <text x="40" y="252" fill="#8899AA" font-size="8">Roles: ADMIN OPERATOR AUDITOR API_CLIENT</text>
+  </g>
+
+  <!-- ════════════════════════════════════════════════ -->
+  <!-- TABLE: recycled_sims (top-center) -->
+  <!-- ════════════════════════════════════════════════ -->
+  <g transform="translate(360, 110)" filter="url(#ds)">
+    <rect width="280" height="300" rx="8" fill="#0E1F35" stroke="#1C7293" stroke-width="1"/>
+    <rect width="280" height="28" rx="8" fill="url(#hdr)"/>
+    <rect y="20" width="280" height="8" fill="url(#hdr)"/>
+    <text x="140" y="19" text-anchor="middle" fill="#FFF" font-size="12" font-weight="700">recycled_sims</text>
+    <text x="12" y="50" fill="#02C39A" font-size="9" font-weight="600">PK</text><text x="40" y="50" fill="#FFF" font-size="9.5">id</text><text x="190" y="50" fill="#556677" font-size="8.5">Integer</text>
+    <text x="40" y="68" fill="#FFF" font-size="9.5">sim_serial</text><text x="190" y="68" fill="#556677" font-size="8.5">String UNIQUE</text>
+    <text x="40" y="86" fill="#02C39A" font-size="9.5" font-weight="600">msisdn</text><text x="190" y="86" fill="#556677" font-size="8.5">String UNIQUE</text>
+    <text x="40" y="104" fill="#FFF" font-size="9.5">imsi</text><text x="190" y="104" fill="#556677" font-size="8.5">String</text>
+    <text x="40" y="122" fill="#FFF" font-size="9.5">operator_code</text><text x="190" y="122" fill="#556677" font-size="8.5">String</text>
+    <text x="40" y="140" fill="#FFF" font-size="9.5">date_recycled</text><text x="190" y="140" fill="#556677" font-size="8.5">DateTime</text>
+    <text x="40" y="158" fill="#FFF" font-size="9.5">date_deactivated</text><text x="190" y="158" fill="#556677" font-size="8.5">DateTime?</text>
+    <text x="40" y="176" fill="#FFF" font-size="9.5">previous_owner_nin</text><text x="190" y="176" fill="#EF4444" font-size="8.5">Encrypted</text>
+    <text x="40" y="194" fill="#FFF" font-size="9.5">previous_nin_linked</text><text x="190" y="194" fill="#556677" font-size="8.5">Boolean</text>
+    <text x="40" y="212" fill="#FFF" font-size="9.5">previous_bvn_linked</text><text x="190" y="212" fill="#556677" font-size="8.5">Boolean</text>
+    <text x="40" y="230" fill="#FFF" font-size="9.5">cleanup_status</text><text x="190" y="230" fill="#F59E0B" font-size="8.5">CleanupStatus</text>
+    <line x1="10" y1="242" x2="270" y2="242" stroke="#1C7293" stroke-width="0.4" stroke-opacity="0.3"/>
+    <text x="40" y="258" fill="#8899AA" font-size="8.5">created_at, updated_at</text>
+    <text x="40" y="274" fill="#8899AA" font-size="8">Status: PENDING IN_PROGRESS COMPLETED FAILED</text>
+    <text x="40" y="290" fill="#8899AA" font-size="8">Validation: +234 MSISDN, 11-digit NIN, 15-digit IMSI</text>
+  </g>
+
+  <!-- ════════════════════════════════════════════════ -->
+  <!-- TABLE: delink_requests (top-right) -->
+  <!-- ════════════════════════════════════════════════ -->
+  <g transform="translate(720, 110)" filter="url(#ds)">
+    <rect width="280" height="280" rx="8" fill="#0E1F35" stroke="#1C7293" stroke-width="1"/>
+    <rect width="280" height="28" rx="8" fill="url(#hdr)"/>
+    <rect y="20" width="280" height="8" fill="url(#hdr)"/>
+    <text x="140" y="19" text-anchor="middle" fill="#FFF" font-size="12" font-weight="700">delink_requests</text>
+    <text x="12" y="50" fill="#02C39A" font-size="9" font-weight="600">PK</text><text x="40" y="50" fill="#FFF" font-size="9.5">id</text><text x="190" y="50" fill="#556677" font-size="8.5">Integer</text>
+    <text x="12" y="68" fill="#F59E0B" font-size="9" font-weight="600">FK</text><text x="40" y="68" fill="#FFF" font-size="9.5">recycled_sim_id</text><text x="190" y="68" fill="#02C39A" font-size="8.5">→ recycled_sims</text>
+    <text x="40" y="86" fill="#FFF" font-size="9.5">request_type</text><text x="190" y="86" fill="#F59E0B" font-size="8.5">NIN|BVN|BOTH</text>
+    <text x="40" y="104" fill="#FFF" font-size="9.5">status</text><text x="190" y="104" fill="#F59E0B" font-size="8.5">DelinkStatus</text>
+    <text x="12" y="122" fill="#F59E0B" font-size="9" font-weight="600">FK</text><text x="40" y="122" fill="#FFF" font-size="9.5">initiated_by</text><text x="190" y="122" fill="#02C39A" font-size="8.5">→ users</text>
+    <text x="12" y="140" fill="#F59E0B" font-size="9" font-weight="600">FK</text><text x="40" y="140" fill="#FFF" font-size="9.5">approved_by</text><text x="190" y="140" fill="#02C39A" font-size="8.5">→ users?</text>
+    <text x="40" y="158" fill="#FFF" font-size="9.5">reason</text><text x="190" y="158" fill="#556677" font-size="8.5">Text?</text>
+    <text x="40" y="176" fill="#FFF" font-size="9.5">error_message</text><text x="190" y="176" fill="#556677" font-size="8.5">Text?</text>
+    <text x="40" y="194" fill="#FFF" font-size="9.5">completed_at</text><text x="190" y="194" fill="#556677" font-size="8.5">DateTime?</text>
+    <line x1="10" y1="206" x2="270" y2="206" stroke="#1C7293" stroke-width="0.4" stroke-opacity="0.3"/>
+    <text x="40" y="222" fill="#8899AA" font-size="8.5">created_at, updated_at</text>
+    <text x="40" y="240" fill="#8899AA" font-size="8">States: PENDING → PROCESSING → COMPLETED</text>
+    <text x="40" y="254" fill="#8899AA" font-size="8">                           → FAILED | CANCELLED</text>
+    <text x="40" y="272" fill="#8899AA" font-size="8">Side effects: unlinks NIN/BVN, updates SIM status</text>
+  </g>
+
+  <!-- ════════════════════════════════════════════════ -->
+  <!-- TABLE: notifications (right) -->
+  <!-- ════════════════════════════════════════════════ -->
+  <g transform="translate(1080, 110)" filter="url(#ds)">
+    <rect width="280" height="250" rx="8" fill="#0E1F35" stroke="#F59E0B" stroke-width="1"/>
+    <rect width="280" height="28" rx="8" fill="url(#hdrA)"/>
+    <rect y="20" width="280" height="8" fill="url(#hdrA)"/>
+    <text x="140" y="19" text-anchor="middle" fill="#FFF" font-size="12" font-weight="700">notifications</text>
+    <text x="12" y="50" fill="#02C39A" font-size="9" font-weight="600">PK</text><text x="40" y="50" fill="#FFF" font-size="9.5">id</text><text x="190" y="50" fill="#556677" font-size="8.5">Integer</text>
+    <text x="12" y="68" fill="#F59E0B" font-size="9" font-weight="600">FK</text><text x="40" y="68" fill="#FFF" font-size="9.5">delink_request_id</text><text x="190" y="68" fill="#02C39A" font-size="8.5">→ delink_requests</text>
+    <text x="40" y="86" fill="#FFF" font-size="9.5">recipient_type</text><text x="190" y="86" fill="#F59E0B" font-size="8.5">RecipientType</text>
+    <text x="40" y="104" fill="#FFF" font-size="9.5">channel</text><text x="190" y="104" fill="#F59E0B" font-size="8.5">SMS|EMAIL|API</text>
+    <text x="40" y="122" fill="#FFF" font-size="9.5">recipient_address</text><text x="190" y="122" fill="#556677" font-size="8.5">String</text>
+    <text x="40" y="140" fill="#FFF" font-size="9.5">status</text><text x="190" y="140" fill="#F59E0B" font-size="8.5">NotifStatus</text>
+    <text x="40" y="158" fill="#FFF" font-size="9.5">sent_at</text><text x="190" y="158" fill="#556677" font-size="8.5">DateTime?</text>
+    <text x="40" y="176" fill="#FFF" font-size="9.5">delivered_at</text><text x="190" y="176" fill="#556677" font-size="8.5">DateTime?</text>
+    <text x="40" y="194" fill="#FFF" font-size="9.5">message_template</text><text x="190" y="194" fill="#556677" font-size="8.5">String?</text>
+    <line x1="10" y1="206" x2="270" y2="206" stroke="#F59E0B" stroke-width="0.4" stroke-opacity="0.3"/>
+    <text x="40" y="222" fill="#8899AA" font-size="8.5">created_at, updated_at</text>
+    <text x="40" y="240" fill="#8899AA" font-size="8">Recipients: FORMER_OWNER BANK NIMC NEW_OWNER</text>
+  </g>
+
+  <!-- ════════════════════════════════════════════════ -->
+  <!-- TABLE: nin_linkages (middle-left) -->
+  <!-- ════════════════════════════════════════════════ -->
+  <g transform="translate(30, 440)" filter="url(#ds)">
+    <rect width="280" height="230" rx="8" fill="#0E1F35" stroke="#02C39A" stroke-width="1"/>
+    <rect width="280" height="28" rx="8" fill="url(#hdrG)"/>
+    <rect y="20" width="280" height="8" fill="url(#hdrG)"/>
+    <text x="140" y="19" text-anchor="middle" fill="#FFF" font-size="12" font-weight="700">nin_linkages</text>
+    <text x="12" y="50" fill="#0A1628" font-size="9" font-weight="600">PK</text><text x="40" y="50" fill="#FFF" font-size="9.5">id</text><text x="190" y="50" fill="#556677" font-size="8.5">Integer</text>
+    <text x="40" y="68" fill="#02C39A" font-size="9.5" font-weight="600">msisdn</text><text x="190" y="68" fill="#556677" font-size="8.5">String (match)</text>
+    <text x="40" y="86" fill="#FFF" font-size="9.5">nin</text><text x="190" y="86" fill="#EF4444" font-size="8.5">PII — 11 digits</text>
+    <text x="40" y="104" fill="#FFF" font-size="9.5">linked_date</text><text x="190" y="104" fill="#556677" font-size="8.5">DateTime</text>
+    <text x="40" y="122" fill="#FFF" font-size="9.5">unlinked_date</text><text x="190" y="122" fill="#556677" font-size="8.5">DateTime?</text>
+    <text x="40" y="140" fill="#02C39A" font-size="9.5" font-weight="600">is_active</text><text x="190" y="140" fill="#556677" font-size="8.5">Boolean (soft del)</text>
+    <text x="40" y="158" fill="#FFF" font-size="9.5">source</text><text x="190" y="158" fill="#F59E0B" font-size="8.5">NIMC_API|MANUAL</text>
+    <text x="40" y="176" fill="#FFF" font-size="9.5">verified_at</text><text x="190" y="176" fill="#556677" font-size="8.5">DateTime?</text>
+    <line x1="10" y1="188" x2="270" y2="188" stroke="#02C39A" stroke-width="0.4" stroke-opacity="0.3"/>
+    <text x="40" y="204" fill="#8899AA" font-size="8.5">created_at, updated_at</text>
+    <text x="40" y="220" fill="#8899AA" font-size="8">Delink sets is_active=FALSE (soft delete)</text>
+  </g>
+
+  <!-- ════════════════════════════════════════════════ -->
+  <!-- TABLE: bvn_linkages (middle-center) -->
+  <!-- ════════════════════════════════════════════════ -->
+  <g transform="translate(380, 440)" filter="url(#ds)">
+    <rect width="280" height="250" rx="8" fill="#0E1F35" stroke="#02C39A" stroke-width="1"/>
+    <rect width="280" height="28" rx="8" fill="url(#hdrG)"/>
+    <rect y="20" width="280" height="8" fill="url(#hdrG)"/>
+    <text x="140" y="19" text-anchor="middle" fill="#FFF" font-size="12" font-weight="700">bvn_linkages</text>
+    <text x="12" y="50" fill="#0A1628" font-size="9" font-weight="600">PK</text><text x="40" y="50" fill="#FFF" font-size="9.5">id</text><text x="190" y="50" fill="#556677" font-size="8.5">Integer</text>
+    <text x="40" y="68" fill="#02C39A" font-size="9.5" font-weight="600">msisdn</text><text x="190" y="68" fill="#556677" font-size="8.5">String (match)</text>
+    <text x="40" y="86" fill="#FFF" font-size="9.5">bvn</text><text x="190" y="86" fill="#EF4444" font-size="8.5">PII — 11 digits</text>
+    <text x="40" y="104" fill="#FFF" font-size="9.5">linked_date</text><text x="190" y="104" fill="#556677" font-size="8.5">DateTime</text>
+    <text x="40" y="122" fill="#FFF" font-size="9.5">unlinked_date</text><text x="190" y="122" fill="#556677" font-size="8.5">DateTime?</text>
+    <text x="40" y="140" fill="#02C39A" font-size="9.5" font-weight="600">is_active</text><text x="190" y="140" fill="#556677" font-size="8.5">Boolean (soft del)</text>
+    <text x="40" y="158" fill="#FFF" font-size="9.5">bank_code</text><text x="190" y="158" fill="#556677" font-size="8.5">String?</text>
+    <text x="40" y="176" fill="#FFF" font-size="9.5">source</text><text x="190" y="176" fill="#F59E0B" font-size="8.5">NIBSS_API|MANUAL</text>
+    <text x="40" y="194" fill="#FFF" font-size="9.5">verified_at</text><text x="190" y="194" fill="#556677" font-size="8.5">DateTime?</text>
+    <line x1="10" y1="206" x2="270" y2="206" stroke="#02C39A" stroke-width="0.4" stroke-opacity="0.3"/>
+    <text x="40" y="222" fill="#8899AA" font-size="8.5">created_at, updated_at</text>
+    <text x="40" y="240" fill="#8899AA" font-size="8">Delink sets is_active=FALSE (soft delete)</text>
+  </g>
+
+  <!-- ════════════════════════════════════════════════ -->
+  <!-- TABLE: audit_logs (middle-right) — IMMUTABLE -->
+  <!-- ════════════════════════════════════════════════ -->
+  <g transform="translate(730, 440)" filter="url(#ds)">
+    <rect width="280" height="230" rx="8" fill="#0E1F35" stroke="#F59E0B" stroke-width="1"/>
+    <rect width="280" height="28" rx="8" fill="url(#hdrA)"/>
+    <rect y="20" width="280" height="8" fill="url(#hdrA)"/>
+    <text x="140" y="19" text-anchor="middle" fill="#FFF" font-size="12" font-weight="700">audit_logs  (IMMUTABLE)</text>
+    <text x="12" y="50" fill="#02C39A" font-size="9" font-weight="600">PK</text><text x="40" y="50" fill="#FFF" font-size="9.5">id</text><text x="190" y="50" fill="#556677" font-size="8.5">Integer</text>
+    <text x="12" y="68" fill="#F59E0B" font-size="9" font-weight="600">FK</text><text x="40" y="68" fill="#FFF" font-size="9.5">user_id</text><text x="190" y="68" fill="#02C39A" font-size="8.5">→ users?</text>
+    <text x="40" y="86" fill="#FFF" font-size="9.5">action</text><text x="190" y="86" fill="#556677" font-size="8.5">String</text>
+    <text x="40" y="104" fill="#FFF" font-size="9.5">resource_type</text><text x="190" y="104" fill="#556677" font-size="8.5">String</text>
+    <text x="40" y="122" fill="#FFF" font-size="9.5">resource_id</text><text x="190" y="122" fill="#556677" font-size="8.5">String</text>
+    <text x="40" y="140" fill="#FFF" font-size="9.5">old_value / new_value</text><text x="204" y="140" fill="#556677" font-size="8.5">JSON</text>
+    <text x="40" y="158" fill="#FFF" font-size="9.5">ip_address</text><text x="190" y="158" fill="#556677" font-size="8.5">String?</text>
+    <text x="40" y="176" fill="#FFF" font-size="9.5">user_agent</text><text x="190" y="176" fill="#556677" font-size="8.5">String?</text>
+    <line x1="10" y1="188" x2="270" y2="188" stroke="#F59E0B" stroke-width="0.4" stroke-opacity="0.3"/>
+    <text x="40" y="204" fill="#8899AA" font-size="8.5">created_at (indexed, append-only)</text>
+    <text x="40" y="220" fill="#EF4444" font-size="8">No UPDATE or DELETE — compliance trail</text>
+  </g>
+
+  <!-- ════════════════════════════════════════════════ -->
+  <!-- TABLE: api_keys (bottom-left) -->
+  <!-- ════════════════════════════════════════════════ -->
+  <g transform="translate(30, 730)" filter="url(#ds)">
+    <rect width="240" height="190" rx="8" fill="#0E1F35" stroke="#EF4444" stroke-width="1"/>
+    <rect width="240" height="28" rx="8" fill="url(#hdrR)"/>
+    <rect y="20" width="240" height="8" fill="url(#hdrR)"/>
+    <text x="120" y="19" text-anchor="middle" fill="#FFF" font-size="12" font-weight="700">api_keys</text>
+    <text x="12" y="50" fill="#FFF" font-size="9" font-weight="600">PK</text><text x="40" y="50" fill="#FFF" font-size="9.5">id</text>
+    <text x="12" y="68" fill="#F59E0B" font-size="9" font-weight="600">FK</text><text x="40" y="68" fill="#FFF" font-size="9.5">user_id</text><text x="150" y="68" fill="#02C39A" font-size="8.5">→ users</text>
+    <text x="40" y="86" fill="#FFF" font-size="9.5">key_hash</text><text x="150" y="86" fill="#556677" font-size="8.5">UNIQUE bcrypt</text>
+    <text x="40" y="104" fill="#FFF" font-size="9.5">name</text><text x="150" y="104" fill="#556677" font-size="8.5">String</text>
+    <text x="40" y="122" fill="#FFF" font-size="9.5">scopes</text><text x="150" y="122" fill="#556677" font-size="8.5">JSON</text>
+    <text x="40" y="140" fill="#FFF" font-size="9.5">is_active</text><text x="150" y="140" fill="#556677" font-size="8.5">Boolean</text>
+    <text x="40" y="158" fill="#FFF" font-size="9.5">expires_at</text><text x="150" y="158" fill="#556677" font-size="8.5">DateTime?</text>
+    <text x="40" y="178" fill="#8899AA" font-size="8">Constant-time bcrypt comparison</text>
+  </g>
+
+  <!-- ════════════════════════════════════════════════ -->
+  <!-- TABLE: webhook_subscriptions (bottom-center-left) -->
+  <!-- ════════════════════════════════════════════════ -->
+  <g transform="translate(310, 730)" filter="url(#ds)">
+    <rect width="240" height="190" rx="8" fill="#0E1F35" stroke="#1C7293" stroke-width="1"/>
+    <rect width="240" height="28" rx="8" fill="url(#hdr)"/>
+    <rect y="20" width="240" height="8" fill="url(#hdr)"/>
+    <text x="120" y="19" text-anchor="middle" fill="#FFF" font-size="12" font-weight="700">webhook_subscriptions</text>
+    <text x="12" y="50" fill="#02C39A" font-size="9" font-weight="600">PK</text><text x="40" y="50" fill="#FFF" font-size="9.5">id</text>
+    <text x="12" y="68" fill="#F59E0B" font-size="9" font-weight="600">FK</text><text x="40" y="68" fill="#FFF" font-size="9.5">user_id</text><text x="150" y="68" fill="#02C39A" font-size="8.5">→ users</text>
+    <text x="40" y="86" fill="#FFF" font-size="9.5">subscriber_name</text><text x="170" y="86" fill="#556677" font-size="8.5">String</text>
+    <text x="40" y="104" fill="#FFF" font-size="9.5">callback_url</text><text x="170" y="104" fill="#556677" font-size="8.5">String</text>
+    <text x="40" y="122" fill="#FFF" font-size="9.5">secret_key</text><text x="170" y="122" fill="#556677" font-size="8.5">HMAC key</text>
+    <text x="40" y="140" fill="#FFF" font-size="9.5">events</text><text x="170" y="140" fill="#556677" font-size="8.5">JSON</text>
+    <text x="40" y="158" fill="#FFF" font-size="9.5">is_active</text><text x="170" y="158" fill="#556677" font-size="8.5">Boolean</text>
+    <text x="40" y="178" fill="#8899AA" font-size="8">SSRF-safe URL validation</text>
+  </g>
+
+  <!-- ════════════════════════════════════════════════ -->
+  <!-- TABLE: revoked_tokens (bottom-center-right) -->
+  <!-- ════════════════════════════════════════════════ -->
+  <g transform="translate(590, 730)" filter="url(#ds)">
+    <rect width="240" height="160" rx="8" fill="#0E1F35" stroke="#EF4444" stroke-width="1"/>
+    <rect width="240" height="28" rx="8" fill="url(#hdrR)"/>
+    <rect y="20" width="240" height="8" fill="url(#hdrR)"/>
+    <text x="120" y="19" text-anchor="middle" fill="#FFF" font-size="12" font-weight="700">revoked_tokens</text>
+    <text x="12" y="50" fill="#FFF" font-size="9" font-weight="600">PK</text><text x="40" y="50" fill="#FFF" font-size="9.5">id</text>
+    <text x="40" y="68" fill="#FFF" font-size="9.5">jti</text><text x="150" y="68" fill="#556677" font-size="8.5">UNIQUE String</text>
+    <text x="40" y="86" fill="#FFF" font-size="9.5">user_id</text><text x="150" y="86" fill="#556677" font-size="8.5">String?</text>
+    <text x="40" y="104" fill="#FFF" font-size="9.5">revoked_at</text><text x="150" y="104" fill="#556677" font-size="8.5">DateTime</text>
+    <text x="40" y="122" fill="#FFF" font-size="9.5">expires_at</text><text x="150" y="122" fill="#556677" font-size="8.5">DateTime</text>
+    <text x="40" y="148" fill="#8899AA" font-size="8">JWT blacklist — checked on every auth</text>
+  </g>
+
+  <!-- ════════════════════════════════════════════════ -->
+  <!-- TABLE: idempotency_keys (bottom-right) -->
+  <!-- ════════════════════════════════════════════════ -->
+  <g transform="translate(870, 730)" filter="url(#ds)">
+    <rect width="240" height="180" rx="8" fill="#0E1F35" stroke="#EF4444" stroke-width="1"/>
+    <rect width="240" height="28" rx="8" fill="url(#hdrR)"/>
+    <rect y="20" width="240" height="8" fill="url(#hdrR)"/>
+    <text x="120" y="19" text-anchor="middle" fill="#FFF" font-size="12" font-weight="700">idempotency_keys</text>
+    <text x="12" y="50" fill="#FFF" font-size="9" font-weight="600">PK</text><text x="40" y="50" fill="#FFF" font-size="9.5">id</text>
+    <text x="40" y="68" fill="#FFF" font-size="9.5">key</text><text x="150" y="68" fill="#556677" font-size="8.5">UNIQUE String</text>
+    <text x="40" y="86" fill="#FFF" font-size="9.5">method / path</text><text x="150" y="86" fill="#556677" font-size="8.5">String</text>
+    <text x="40" y="104" fill="#FFF" font-size="9.5">user_id</text><text x="150" y="104" fill="#556677" font-size="8.5">String? (IDOR)</text>
+    <text x="40" y="122" fill="#FFF" font-size="9.5">status_code</text><text x="150" y="122" fill="#556677" font-size="8.5">Integer?</text>
+    <text x="40" y="140" fill="#FFF" font-size="9.5">response_body</text><text x="150" y="140" fill="#556677" font-size="8.5">Text?</text>
+    <text x="40" y="160" fill="#FFF" font-size="9.5">expires_at</text><text x="150" y="160" fill="#556677" font-size="8.5">DateTime</text>
+    <text x="40" y="175" fill="#8899AA" font-size="8">5s dedup window, user-scoped</text>
+  </g>
+
+  <!-- ═══════════════════════════════════════════════════════════ -->
+  <!-- RELATIONSHIP ARROWS -->
+  <!-- ═══════════════════════════════════════════════════════════ -->
+
+  <!-- delink_requests.recycled_sim_id → recycled_sims.id -->
+  <path d="M720,178 L640,178" stroke="#02C39A" stroke-width="2" fill="none" marker-end="url(#fk)"/>
+  <text x="665" y="172" fill="#02C39A" font-size="7.5" font-weight="600">recycled_sim_id</text>
+
+  <!-- delink_requests.initiated_by → users.id -->
+  <path d="M720,232 L680,232 L680,350 L280,350 L280,300" stroke="#02C39A" stroke-width="1.5" fill="none" stroke-dasharray="6,3" marker-end="url(#fk)"/>
+  <text x="400" y="346" fill="#02C39A" font-size="7.5">initiated_by / approved_by</text>
+
+  <!-- notifications.delink_request_id → delink_requests.id -->
+  <path d="M1080,178 L1000,178" stroke="#F59E0B" stroke-width="2" fill="none" marker-end="url(#fkW)"/>
+  <text x="1010" y="172" fill="#F59E0B" font-size="7.5" font-weight="600">delink_request_id</text>
+
+  <!-- recycled_sims.msisdn ~~~ nin_linkages.msisdn (implicit match) -->
+  <path d="M440,410 L170,440" stroke="#02C39A" stroke-width="1.5" fill="none" stroke-dasharray="4,4"/>
+  <text x="260" y="418" fill="#02C39A" font-size="7.5" font-style="italic">MSISDN match</text>
+
+  <!-- recycled_sims.msisdn ~~~ bvn_linkages.msisdn (implicit match) -->
+  <path d="M500,410 L520,440" stroke="#02C39A" stroke-width="1.5" fill="none" stroke-dasharray="4,4"/>
+  <text x="480" y="432" fill="#02C39A" font-size="7.5" font-style="italic">MSISDN match</text>
+
+  <!-- audit_logs.user_id → users.id -->
+  <path d="M730,508 L280,508 L280,370" stroke="#F59E0B" stroke-width="1.2" fill="none" stroke-dasharray="5,3" marker-end="url(#fkW)"/>
+  <text x="430" y="502" fill="#F59E0B" font-size="7.5">user_id (nullable)</text>
+
+  <!-- api_keys.user_id → users.id -->
+  <path d="M150,730 L155,400 L155,370" stroke="#1C7293" stroke-width="1.2" fill="none" stroke-dasharray="5,3" marker-end="url(#fkB)"/>
+
+  <!-- webhook_subs.user_id → users.id -->
+  <path d="M430,730 L430,700 L200,700 L200,370" stroke="#1C7293" stroke-width="1.2" fill="none" stroke-dasharray="5,3" marker-end="url(#fkB)"/>
+
+  <!-- ═══════════════════════════════════════════════════════════ -->
+  <!-- STATE MACHINE CARDS -->
+  <!-- ═══════════════════════════════════════════════════════════ -->
+
+  <!-- Read Replica badge -->
+  <g transform="translate(1150, 440)" filter="url(#ds)">
+    <rect width="210" height="230" rx="8" fill="#0E1F35" stroke="#02C39A" stroke-width="1"/>
+    <rect width="210" height="28" rx="8" fill="url(#hdrG)"/>
+    <rect y="20" width="210" height="8" fill="url(#hdrG)"/>
+    <text x="105" y="19" text-anchor="middle" fill="#FFF" font-size="11" font-weight="700">Read Replica Routing</text>
+
+    <text x="15" y="52" fill="#FFF" font-size="9.5" font-weight="600">Primary (writes)</text>
+    <text x="15" y="68" fill="#8899AA" font-size="8.5">All POST / PATCH / DELETE</text>
+    <text x="15" y="82" fill="#8899AA" font-size="8.5">Auth endpoints</text>
+    <text x="15" y="96" fill="#8899AA" font-size="8.5">CRUD operations</text>
+
+    <line x1="10" y1="108" x2="200" y2="108" stroke="#02C39A" stroke-width="0.4" stroke-opacity="0.3"/>
+
+    <text x="15" y="126" fill="#02C39A" font-size="9.5" font-weight="600">Replica (reads)</text>
+    <text x="15" y="142" fill="#8899AA" font-size="8.5">GET /dashboard/stats</text>
+    <text x="15" y="156" fill="#8899AA" font-size="8.5">GET /dashboard/trends</text>
+    <text x="15" y="170" fill="#8899AA" font-size="8.5">Aggregate COUNT queries</text>
+
+    <line x1="10" y1="182" x2="200" y2="182" stroke="#02C39A" stroke-width="0.4" stroke-opacity="0.3"/>
+
+    <text x="15" y="200" fill="#F59E0B" font-size="9.5" font-weight="600">Fallback</text>
+    <text x="15" y="216" fill="#8899AA" font-size="8.5">No replica configured?</text>
+    <text x="15" y="228" fill="#8899AA" font-size="8.5">Auto-routes to primary</text>
+  </g>
+
+  <!-- Pool info badge -->
+  <g transform="translate(1150, 730)" filter="url(#ds)">
+    <rect width="210" height="190" rx="8" fill="#0E1F35" stroke="#1C7293" stroke-width="1"/>
+    <rect width="210" height="28" rx="8" fill="url(#hdr)"/>
+    <rect y="20" width="210" height="8" fill="url(#hdr)"/>
+    <text x="105" y="19" text-anchor="middle" fill="#FFF" font-size="11" font-weight="700">Connection Pool</text>
+
+    <text x="15" y="52" fill="#FFF" font-size="9.5">pool_size</text><text x="130" y="52" fill="#02C39A" font-size="9.5">20</text>
+    <text x="15" y="70" fill="#FFF" font-size="9.5">max_overflow</text><text x="130" y="70" fill="#02C39A" font-size="9.5">20</text>
+    <text x="15" y="88" fill="#FFF" font-size="9.5">pool_pre_ping</text><text x="130" y="88" fill="#02C39A" font-size="9.5">true</text>
+    <text x="15" y="106" fill="#FFF" font-size="9.5">pool_recycle</text><text x="130" y="106" fill="#02C39A" font-size="9.5">3600s</text>
+    <text x="15" y="124" fill="#FFF" font-size="9.5">timeout</text><text x="130" y="124" fill="#02C39A" font-size="9.5">30s</text>
+
+    <line x1="10" y1="138" x2="200" y2="138" stroke="#1C7293" stroke-width="0.4" stroke-opacity="0.3"/>
+
+    <text x="15" y="156" fill="#8899AA" font-size="8.5">Drivers: PostgreSQL, MySQL,</text>
+    <text x="15" y="170" fill="#8899AA" font-size="8.5">Oracle, InterSystems, SQLite</text>
+    <text x="15" y="184" fill="#8899AA" font-size="8.5">Async via asyncpg / aiomysql</text>
+  </g>
+
+  <!-- Footer -->
+  <text x="700" y="1038" text-anchor="middle" fill="#556677" font-size="9">Reconix Database ERD — 11 ORM Models · PostgreSQL 16 · Async SQLAlchemy 2.0 · BaseRepository&lt;T&gt; Pattern</text>
+</svg>

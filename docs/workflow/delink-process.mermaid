@@ -1,0 +1,224 @@
+flowchart TD
+    Start(["Operator Initiates<br/>Delink Request"])
+    Submit["POST /api/v1/delink-requests<br/>MSISDN, NIN, BVN<br/>operator_id, reason"]
+
+    Validate["Validate Request:<br/>- SIM exists?<br/>- Linkage exists?<br/>- Duplicate?<br/>- User authorized?"]
+
+    ValidOK{"Validation<br/>Pass?"}
+
+    CreateRequest["Create delink_requests<br/>- status = submitted<br/>- operator_approval = pending<br/>- bank_approval = pending"]
+
+    PublishEvent["Publish Event:<br/>delink.request.submitted"]
+
+    Response["Return 202 Accepted<br/>+ request_uuid"]
+
+    NotifyOperator["Send SMS/Email<br/>to Operator:<br/>Confirmation of<br/>Submission"]
+
+    StateCHECK{"NIN or<br/>BVN or<br/>Both?"}
+
+    OperatorApproval["OPERATOR APPROVAL<br/>PHASE"]
+    OperApproveWait["Operator Manager<br/>Reviews Request"]
+
+    OperApproved{"Approved?"}
+
+    ApprovedYes["Create delink_approvals<br/>approval_type = operator<br/>status = approved<br/>Save approver_user_id"]
+    UpdateStatus1["Update delink_requests<br/>operator_approval = approved<br/>workflow_status based on type"]
+
+    ApprovedNo["Create delink_approvals<br/>status = rejected<br/>Save rejection notes"]
+    UpdateStatusRej["Update delink_requests<br/>operator_approval = rejected<br/>workflow_status = failed"]
+    NotifyRej["Notify Operator:<br/>Request Rejected"]
+
+    NeedBankApproval{"BVN Linkage<br/>Present?"}
+
+    DirectToNIMC["Transition to<br/>AWAITING_NIMC_NOTIFICATION"]
+
+    BankApprovalPhase["BANK APPROVAL PHASE"]
+    GetBankInfo["Get Bank Info<br/>from bvn_linkages"]
+    NotifyBank["Send Email<br/>to Bank Manager:<br/>Approval Pending<br/>SLA: 48 hours"]
+    BankReview["Bank Reviews<br/>Delink Request"]
+
+    BankApproved{"Approved?"}
+
+    BankYes["Create delink_approvals<br/>approval_type = bank<br/>status = approved<br/>bank_approved_at = now"]
+    UpdateStatus2["Update delink_requests<br/>bank_approval = approved<br/>bank_approved_by_user_id"]
+    PublishBankApproved["Publish Event:<br/>delink.bank.approved"]
+
+    BankNo["Create delink_approvals<br/>status = rejected"]
+    UpdateStatusBankRej["Update delink_requests<br/>bank_approval = rejected<br/>workflow_status = failed"]
+    NotifyBankRej["Notify Operator:<br/>Bank Rejected"]
+
+    NIMCNotificationPhase["NIMC NOTIFICATION PHASE"]
+    PrepareNIMC["Prepare NIMC Request:<br/>- NIN<br/>- MSISDN<br/>- Operator Name<br/>- Request ID<br/>- Timestamp"]
+
+    CallNIMCAPI["Call NIMC API:<br/>POST /delink-request"]
+
+    NIMCResult{"NIMC<br/>Response<br/>Success?"}
+
+    NIMCSuccess["Store Response:<br/>- nimc_reference_id<br/>- nimc_notified_at<br/>- verification_timestamp"]
+    UpdateNIMCStatus["Update delink_requests<br/>nimc_notification_status = notified<br/>workflow_status = execution_in_progress"]
+
+    NIMCFailed["NIMC API Failed<br/>or Timeout"]
+    RetryNIMC["Retry Logic:<br/>- Attempt 1: immediate<br/>- Attempt 2: +5 min<br/>- Attempt 3: +30 min<br/>Max 3 attempts"]
+
+    RetrySuccess["Update Status<br/>nimc_notified = true"]
+    RetryFailed["Mark as Failed<br/>Queue for Manual<br/>Review"]
+
+    ExecutionPhase["EXECUTION PHASE<br/>Delink from Systems"]
+
+    ExecuteNIN{"Need NIN<br/>Delink?"}
+
+    NINDelink["DELETE NIN Linkage:<br/>1. Call Bank API<br/>2. Verify deletion<br/>3. Update DB:<br/>   is_current = false<br/>   deleted_at = now"]
+
+    ExecuteBVN{"Need BVN<br/>Delink?"}
+
+    BVNDelink["DELETE BVN Linkage:<br/>1. Call Bank API<br/>2. Verify deletion<br/>3. Update DB:<br/>   is_current = false<br/>   deleted_at = now"]
+
+    BothDone["Both NIN & BVN<br/>Delinked"]
+
+    VerifyDelink["Verification Check:<br/>- No active linkage<br/>  in recycled_sims?<br/>- No current linkage<br/>  in nin_linkages?<br/>- No current linkage<br/>  in bvn_linkages?"]
+
+    VerifyPass{"All Linkages<br/>Deleted?"}
+
+    Success["COMPLETED<br/>Update delink_requests:<br/>- workflow_status = completed<br/>- execution_status = completed<br/>- is_successful = true<br/>- completion_timestamp = now"]
+
+    UpdateRecycled["Update recycled_sims:<br/>- linkage_status = resolved<br/>- cleanup_status = completed"]
+
+    PublishCompleted["Publish Event:<br/>delink.completed"]
+
+    NotifyComplete["Send SMS<br/>to Operator:<br/>Delink Completed"]
+
+    AuditLog["Create Audit Entry:<br/>event_type = delink_executed<br/>action_result = success"]
+
+    ExecutionFailed["Execution Failed<br/>(Bank API error,<br/>partial deletion,<br/>verification failed)"]
+
+    Retry3{"Retry<br/>Attempts<br/>< 3?"}
+
+    RetryExec["Increment retry_count<br/>Queue for retry<br/>next_retry_at = +5min"]
+
+    MaxRetries["Max Retries<br/>Exceeded"]
+
+    FailedStatus["Update delink_requests:<br/>- workflow_status = failed<br/>- execution_status = failed<br/>- error_message = details<br/>- error_details = JSON"]
+
+    PublishFailed["Publish Event:<br/>delink.failed"]
+
+    AlertOps["Alert Operations Team:<br/>Manual Review<br/>Required"]
+
+    RollbackOption["Options:<br/>1. Retry<br/>2. Rollback<br/>3. Dispute<br/>4. Manual Fix"]
+
+    ValidateERR["Return 400<br/>Bad Request<br/>+ error details"]
+
+    Start --> Submit
+    Submit --> Validate
+    Validate --> ValidOK
+
+    ValidOK -->|No| ValidateERR
+    ValidateERR --> End1(["Request Rejected"])
+
+    ValidOK -->|Yes| CreateRequest
+    CreateRequest --> PublishEvent
+    PublishEvent --> Response
+    Response --> NotifyOperator
+
+    NotifyOperator --> OperatorApproval
+
+    OperatorApproval --> OperApproveWait
+    OperApproveWait --> OperApproved
+
+    OperApproved -->|No| ApprovedNo
+    ApprovedNo --> UpdateStatusRej
+    UpdateStatusRej --> NotifyRej
+    NotifyRej --> End2(["Request Rejected"])
+
+    OperApproved -->|Yes| ApprovedYes
+    ApprovedYes --> UpdateStatus1
+    UpdateStatus1 --> StateCHECK
+
+    StateCHECK --> NeedBankApproval
+
+    NeedBankApproval -->|No BVN| DirectToNIMC
+    NeedBankApproval -->|Has BVN| BankApprovalPhase
+
+    BankApprovalPhase --> GetBankInfo
+    GetBankInfo --> NotifyBank
+    NotifyBank --> BankReview
+    BankReview --> BankApproved
+
+    BankApproved -->|No| BankNo
+    BankNo --> UpdateStatusBankRej
+    UpdateStatusBankRej --> NotifyBankRej
+    NotifyBankRej --> End3(["Request Failed"])
+
+    BankApproved -->|Yes| BankYes
+    BankYes --> UpdateStatus2
+    UpdateStatus2 --> PublishBankApproved
+    PublishBankApproved --> DirectToNIMC
+
+    DirectToNIMC --> NIMCNotificationPhase
+
+    NIMCNotificationPhase --> PrepareNIMC
+    PrepareNIMC --> CallNIMCAPI
+
+    CallNIMCAPI --> NIMCResult
+
+    NIMCResult -->|Failed/Timeout| NIMCFailed
+    NIMCFailed --> RetryNIMC
+    RetryNIMC --> RetrySuccess
+    RetrySuccess --> UpdateNIMCStatus
+    RetryNIMC --> RetryFailed
+    RetryFailed --> End4(["Request Failed"])
+
+    NIMCResult -->|Success| NIMCSuccess
+    NIMCSuccess --> UpdateNIMCStatus
+
+    UpdateNIMCStatus --> ExecutionPhase
+
+    ExecutionPhase --> ExecuteNIN
+
+    ExecuteNIN -->|Yes| NINDelink
+    ExecuteNIN -->|No| ExecuteBVN
+
+    NINDelink --> ExecuteBVN
+    ExecuteBVN -->|Yes| BVNDelink
+    ExecuteBVN -->|No| VerifyDelink
+
+    BVNDelink --> BothDone
+    BothDone --> VerifyDelink
+
+    VerifyDelink --> VerifyPass
+
+    VerifyPass -->|No| ExecutionFailed
+    VerifyPass -->|Yes| Success
+
+    ExecutionFailed --> Retry3
+
+    Retry3 -->|Yes| RetryExec
+    Retry3 -->|No| MaxRetries
+
+    RetryExec --> End5(["Request Queued"])
+
+    MaxRetries --> FailedStatus
+    FailedStatus --> PublishFailed
+    PublishFailed --> AlertOps
+    AlertOps --> RollbackOption
+    RollbackOption --> End6(["Manual Review"])
+
+    Success --> UpdateRecycled
+    UpdateRecycled --> PublishCompleted
+    PublishCompleted --> NotifyComplete
+    NotifyComplete --> AuditLog
+    AuditLog --> End7(["Delink Completed"])
+
+    style Start fill:#90EE90
+    style End1 fill:#FFB6C6
+    style End2 fill:#FFB6C6
+    style End3 fill:#FFB6C6
+    style End4 fill:#FFB6C6
+    style End5 fill:#FFA500
+    style End6 fill:#FFB6C6
+    style End7 fill:#90EE90
+    style Success fill:#90EE90,color:#000
+    style ExecutionFailed fill:#FF6B6B,color:#fff
+    style FailedStatus fill:#FF6B6B,color:#fff
+    style BankApprovalPhase fill:#87CEEB
+    style NIMCNotificationPhase fill:#DDA0DD
+    style ExecutionPhase fill:#F0E68C

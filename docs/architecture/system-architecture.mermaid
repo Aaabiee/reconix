@@ -1,0 +1,143 @@
+graph TB
+    subgraph ExternalSystems["External Systems & Integrations"]
+        NIMC["NIMC API<br/>(NIN Registry)"]
+        NIBSS["NIBSS API<br/>(BVN Registry)"]
+        MTN["MTN Operator<br/>(SFTP + REST)"]
+        Airtel["Airtel Operator<br/>(SFTP + REST)"]
+        Glo["Globacom<br/>(SFTP + REST)"]
+        Mobile9["9mobile<br/>(SFTP + REST)"]
+        Banks["Bank APIs<br/>(Delink Execution)"]
+        SMSGateway["SMS Gateway<br/>(AWS SNS)"]
+        EmailGateway["Email Gateway<br/>(SendGrid)"]
+    end
+
+    subgraph EdgeLayer["Edge & Ingress"]
+        CDN["CDN<br/>(CloudFront)"]
+        LB["Load Balancer<br/>(NLB)"]
+        WAF["WAF<br/>(ModSecurity)"]
+        DNS["DNS<br/>(Route 53)"]
+    end
+
+    subgraph APIGateway["API Gateway Layer"]
+        Gateway["API Gateway<br/>(Node.js + Express)<br/>Authentication, Rate Limiting"]
+    end
+
+    subgraph Services["Microservices"]
+        ReconcileService["Reconciliation Service<br/>(SIM Detection)<br/>3 replicas"]
+        DelinkService["Delink Service<br/>(Workflow Mgmt)<br/>2 replicas"]
+        NotificationService["Notification Service<br/>(Multi-channel)<br/>2 replicas"]
+        ReportingService["Reporting Service<br/>(Analytics)<br/>1 replica"]
+        AuthService["Auth Service<br/>(JWT + RBAC)<br/>2 replicas"]
+    end
+
+    subgraph DataLayer["Data Layer"]
+        PostgreSQL["PostgreSQL Cluster<br/>(1 Primary + 2 Replicas)<br/>500GB storage per node"]
+        PgBouncer["PgBouncer<br/>(Connection Pool)"]
+        Redis["Redis Cluster<br/>(3 nodes)<br/>Cache & Sessions"]
+    end
+
+    subgraph MessageQueue["Async Processing"]
+        RabbitMQ["RabbitMQ Cluster<br/>(3 nodes)<br/>Message routing & queueing"]
+        DeadLetterQueue["Dead Letter Queue<br/>(Retry logic)"]
+    end
+
+    subgraph FrontendApps["Client Applications"]
+        AdminUI["Admin Dashboard<br/>(React 18)<br/>User mgmt, System config"]
+        OperatorUI["Operator Portal<br/>(React 18)<br/>SIM reconciliation"]
+        AuditorUI["Auditor Dashboard<br/>(React 18)<br/>Audit logs, Compliance"]
+        RESTAPI["REST API<br/>(OpenAPI 3.0)<br/>M2M Integration"]
+    end
+
+    subgraph ObservabilityStack["Monitoring & Observability"]
+        Prometheus["Prometheus<br/>(Metrics)"]
+        Grafana["Grafana<br/>(Dashboards)"]
+        ELK["ELK Stack<br/>(Logging)"]
+        AlertManager["Alert Manager<br/>(Notifications)"]
+    end
+
+    subgraph StorageBackup["Storage & Backup"]
+        S3["AWS S3<br/>(Backup & Logs)"]
+        SecondaryRegion["Secondary Region<br/>(Hot Standby)"]
+    end
+
+    %% Client tier connections
+    FrontendApps -->|"HTTPS"| CDN
+    FrontendApps -->|"REST API"| DNS
+    CDN -->|"Cache"| WAF
+    DNS -->|"DNS Query"| LB
+    LB -->|"HTTPS"| WAF
+    WAF -->|"Validated Requests"| Gateway
+
+    %% Gateway to Services
+    Gateway -->|"Route & Auth"| ReconcileService
+    Gateway -->|"Route & Auth"| DelinkService
+    Gateway -->|"Route & Auth"| NotificationService
+    Gateway -->|"Route & Auth"| ReportingService
+    Gateway -->|"Route & Auth"| AuthService
+
+    %% Services to Data Layer
+    ReconcileService -->|"Query/Write"| PgBouncer
+    DelinkService -->|"Query/Write"| PgBouncer
+    NotificationService -->|"Query/Write"| PgBouncer
+    ReportingService -->|"Query"| PgBouncer
+    AuthService -->|"Query/Write"| PgBouncer
+
+    PgBouncer -->|"Connection Pool"| PostgreSQL
+    PostgreSQL -->|"Primary → Replicas"| PostgreSQL
+
+    %% Caching
+    Services -->|"Set/Get"| Redis
+    Gateway -->|"Session"| Redis
+
+    %% Message Queue
+    Services -->|"Publish Events"| RabbitMQ
+    ReconcileService -->|"Reconciliation Jobs"| RabbitMQ
+    DelinkService -->|"Delink Events"| RabbitMQ
+    NotificationService -->|"Consume Events"| RabbitMQ
+    ReportingService -->|"Consume Events"| RabbitMQ
+    RabbitMQ -->|"Failed Messages"| DeadLetterQueue
+
+    %% External Integrations
+    ReconcileService -->|"API Call"| NIMC
+    ReconcileService -->|"API Call"| NIBSS
+    ReconcileService -->|"SFTP Pull"| MTN
+    ReconcileService -->|"SFTP Pull"| Airtel
+    ReconcileService -->|"SFTP Pull"| Glo
+    ReconcileService -->|"SFTP Pull"| Mobile9
+    DelinkService -->|"Delink Request"| Banks
+    NotificationService -->|"Send SMS"| SMSGateway
+    NotificationService -->|"Send Email"| EmailGateway
+
+    %% Observability
+    Services -->|"Metrics"| Prometheus
+    PostgreSQL -->|"Metrics"| Prometheus
+    RabbitMQ -->|"Metrics"| Prometheus
+    Redis -->|"Metrics"| Prometheus
+    Prometheus -->|"Query"| Grafana
+    Services -->|"Logs"| ELK
+    Prometheus -->|"Alert"| AlertManager
+
+    %% Backup & DR
+    PostgreSQL -->|"Continuous WAL"| S3
+    S3 -->|"Cross-region"| SecondaryRegion
+    S3 -->|"Backup Restore"| PostgreSQL
+
+    %% Styling
+    classDef external fill:#e3f2fd,stroke:#1976d2,stroke-width:2px
+    classDef gateway fill:#fff3e0,stroke:#f57c00,stroke-width:2px
+    classDef service fill:#e8f5e9,stroke:#388e3c,stroke-width:2px
+    classDef data fill:#fce4ec,stroke:#c2185b,stroke-width:2px
+    classDef queue fill:#f3e5f5,stroke:#7b1fa2,stroke-width:2px
+    classDef client fill:#ede7f6,stroke:#512da8,stroke-width:2px
+    classDef observability fill:#e0f2f1,stroke:#00897b,stroke-width:2px
+    classDef storage fill:#fff9c4,stroke:#f57f17,stroke-width:2px
+
+    class NIMC,NIBSS,MTN,Airtel,Glo,Mobile9,Banks,SMSGateway,EmailGateway external
+    class Gateway gateway
+    class ReconcileService,DelinkService,NotificationService,ReportingService,AuthService service
+    class PostgreSQL,PgBouncer,Redis data
+    class RabbitMQ,DeadLetterQueue queue
+    class AdminUI,OperatorUI,AuditorUI,RESTAPI client
+    class Prometheus,Grafana,ELK,AlertManager observability
+    class S3,SecondaryRegion storage
+    class CDN,LB,WAF,DNS edge
