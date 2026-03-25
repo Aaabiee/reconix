@@ -1,4 +1,4 @@
-FROM python:3.12-slim AS backend-base
+FROM python:3.13-slim AS backend-base
 
 RUN apt-get update && apt-get install -y --no-install-recommends \
     gcc \
@@ -15,18 +15,13 @@ RUN pipenv install --deploy --system
 COPY fast_api/ ./fast_api/
 COPY gunicorn.conf.py ./
 
-FROM node:20-alpine AS frontend-deps
+FROM node:24-alpine AS frontend-deps
 
 WORKDIR /app
-COPY package.json package-lock.json* yarn.lock* pnpm-lock.yaml* ./
-RUN \
-  if [ -f yarn.lock ]; then yarn install --frozen-lockfile; \
-  elif [ -f pnpm-lock.yaml ]; then corepack enable pnpm && pnpm install --frozen-lockfile; \
-  elif [ -f package-lock.json ]; then npm ci; \
-  else npm install; \
-  fi
+COPY package.json package-lock.json* ./
+RUN npm ci --legacy-peer-deps
 
-FROM node:20-alpine AS frontend-builder
+FROM node:24-alpine AS frontend-builder
 
 WORKDIR /app
 COPY --from=frontend-deps /app/node_modules ./node_modules
@@ -37,7 +32,7 @@ COPY public/ ./public/
 ENV NEXT_TELEMETRY_DISABLED=1
 RUN npm run build
 
-FROM python:3.12-slim
+FROM python:3.13-slim
 
 RUN apt-get update && apt-get install -y --no-install-recommends \
     curl \
@@ -48,7 +43,7 @@ RUN groupadd -r reconix && useradd -r -g reconix -d /app -s /sbin/nologin reconi
 
 WORKDIR /app
 
-COPY --from=backend-base /usr/local/lib/python3.12/site-packages /usr/local/lib/python3.12/site-packages
+COPY --from=backend-base /usr/local/lib/python3.13/site-packages /usr/local/lib/python3.13/site-packages
 COPY --from=backend-base /usr/local/bin/gunicorn /usr/local/bin/gunicorn
 COPY --from=backend-base /usr/local/bin/uvicorn /usr/local/bin/uvicorn
 COPY --from=backend-base /app/fast_api ./fast_api
